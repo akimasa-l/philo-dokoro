@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Capsule Gacha</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top, #2c1b4d, transparent 40%),
+        radial-gradient(circle at bottom right, #0d3a47, transparent 35%),
+        #050816;
+      color: white;
+      height: 100vh;
+    }
+
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      transform: perspective(500px) rotateX(75deg);
+      transform-origin: center top;
+      animation: gridMove 10s linear infinite;
+    }
+
+    @keyframes gridMove {
+      from {
+        background-position-y: 0;
+      }
+      to {
+        background-position-y: 40px;
+      }
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .title {
+      font-size: 56px;
+      font-weight: 900;
+      letter-spacing: 6px;
+      text-shadow:
+        0 0 10px #6ff,
+        0 0 20px #6ff,
+        0 0 40px #09f;
+    }
+
+    .machine {
+      width: 340px;
+      height: 480px;
+      border-radius: 40px;
+      background: linear-gradient(145deg, #1a2038, #0b1020);
+      border: 2px solid rgba(255,255,255,0.1);
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 0 40px rgba(0,255,255,0.15),
+        inset 0 0 40px rgba(255,255,255,0.03);
+    }
+
+    .machine::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        transparent 20%,
+        rgba(255,255,255,0.08) 40%,
+        transparent 60%
+      );
+      animation: shine 4s linear infinite;
+    }
+
+    @keyframes shine {
+      from {
+        transform: translateX(-100%);
+      }
+      to {
+        transform: translateX(200%);
+      }
+    }
+
+    .capsule-zone {
+      position: absolute;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #2ff, #126);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 0 30px rgba(0,255,255,0.5),
+        inset 0 0 30px rgba(255,255,255,0.2);
+    }
+
+    .capsule {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 1s ease;
+    }
+
+    .capsule-top,
+    .capsule-bottom {
+      position: absolute;
+      width: 100%;
+      height: 50%;
+      left: 0;
+    }
+
+    .capsule-top {
+      top: 0;
+      border-radius: 100px 100px 0 0;
+      background: linear-gradient(#ff7ad9, #d93fff);
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .capsule-bottom {
+      bottom: 0;
+      border-radius: 0 0 100px 100px;
+      background: linear-gradient(#ffffff, #b6d7ff);
+    }
+
+    .capsule.spin {
+      animation: spin 0.15s linear infinite;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .capsule.open .capsule-top {
+      animation: openTop 0.8s forwards;
+    }
+
+    .capsule.open .capsule-bottom {
+      animation: openBottom 0.8s forwards;
+    }
+
+    @keyframes openTop {
+      to {
+        transform: translateY(-60px) rotate(-20deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes openBottom {
+      to {
+        transform: translateY(60px) rotate(20deg);
+        opacity: 0;
+      }
+    }
+
+    .result {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.6s;
+    }
+
+    .result.show {
+      opacity: 1;
+    }
+
+    .rarity {
+      font-size: 72px;
+      font-weight: 900;
+      letter-spacing: 8px;
+      margin-bottom: 10px;
+    }
+
+    .character {
+      width: 140px;
+      height: 140px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #ffe27a, #ff6b9c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      box-shadow: 0 0 40px rgba(255,255,255,0.3);
+      animation: floaty 2s ease-in-out infinite;
+    }
+
+    @keyframes floaty {
+      0%,100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .name {
+      margin-top: 18px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .controls {
+      position: absolute;
+      bottom: 30px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .gacha-btn {
+      border: none;
+      padding: 18px 42px;
+      border-radius: 999px;
+      font-size: 20px;
+      font-weight: 900;
+      color: black;
+      cursor: pointer;
+      background: linear-gradient(90deg, #00ffe7, #68a8ff, #ff77e9);
+      box-shadow:
+        0 0 20px rgba(0,255,255,0.4),
+        0 10px 30px rgba(0,0,0,0.5);
+      transition: transform 0.15s;
+    }
+
+    .gacha-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .flash {
+      position: absolute;
+      inset: 0;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .flash.active {
+      animation: flash 0.7s;
+    }
+
+    @keyframes flash {
+      0% {
+        opacity: 0;
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+
+  <div class="container">
+    <div class="title">NEON CAPSULE</div>
+
+    <div class="machine">
+      <div class="flash" id="flash"></div>
+
+      <div class="capsule-zone">
+        <div class="capsule" id="capsule">
+          <div class="capsule-top"></div>
+          <div class="capsule-bottom"></div>
+        </div>
+      </div>
+
+      <div class="result" id="result">
+        <div class="rarity" id="rarity">SSR</div>
+        <div class="character" id="character">⚡</div>
+        <div class="name" id="name">Nova</div>
+      </div>
+
+      <div class="controls">
+        <button class="gacha-btn" id="gachaBtn">
+          INSERT COIN
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const rewards = [
+      {
+        rarity: 'SSR',
+        name: 'Nova',
+        icon: '⚡'
+      },
+      {
+        rarity: 'SR',
+        name: 'Luna',
+        icon: '🌙'
+      },
+      {
+        rarity: 'R',
+        name: 'Mochi',
+        icon: '🐾'
+      }
+    ];
+
+    const capsule = document.getElementById('capsule');
+    const result = document.getElementById('result');
+    const rarity = document.getElementById('rarity');
+    const nameEl = document.getElementById('name');
+    const character = document.getElementById('character');
+    const flash = document.getElementById('flash');
+    const button = document.getElementById('gachaBtn');
+
+    let rolling = false;
+
+    button.addEventListener('click', () => {
+      if (rolling) return;
+
+      rolling = true;
+
+      result.classList.remove('show');
+      capsule.classList.remove('open');
+      capsule.classList.add('spin');
+
+      button.textContent = 'ROLLING...';
+
+      setTimeout(() => {
+        capsule.classList.remove('spin');
+        capsule.classList.add('open');
+
+        flash.classList.add('active');
+
+        const rand = Math.random();
+
+        let reward;
+
+        if (rand < 0.08) {
+          reward = rewards[0];
+        } else if (rand < 0.35) {
+          reward = rewards[1];
+        } else {
+          reward = rewards[2];
+        }
+
+        rarity.textContent = reward.rarity;
+        nameEl.textContent = reward.name;
+        character.textContent = reward.icon;
+
+        if (reward.rarity === 'SSR') {
+          rarity.style.color = '#ffe066';
+        } else if (reward.rarity === 'SR') {
+          rarity.style.color = '#ff7aff';
+        } else {
+          rarity.style.color = '#8be9ff';
+        }
+
+        setTimeout(() => {
+          result.classList.add('show');
+          button.textContent = 'TRY AGAIN';
+          rolling = false;
+          flash.classList.remove('active');
+        }, 500);
+      }, 1800);
+    });
+  </script>
+</body>
+</html>

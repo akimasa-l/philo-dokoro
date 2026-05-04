@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>Gacha Demo</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: sans-serif;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at top, #263b6d 0%, #12192d 40%, #05070f 100%);
+    height: 100vh;
+    color: white;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* ===== Background particles ===== */
+
+.stars {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    opacity: 0.7;
+    border-radius: 50%;
+    animation: twinkle 2s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+    0%,100% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(2);
+    }
+}
+
+/* ===== Main ===== */
+
+.main {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+}
+
+.logo {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(255,255,255,0.7);
+}
+
+.gacha-area {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.portal {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle, #66ccff 0%, #2048ff 40%, #091133 70%);
+    box-shadow:
+        0 0 30px #4da6ff,
+        0 0 80px #3366ff,
+        inset 0 0 40px rgba(255,255,255,0.5);
+    animation: portalPulse 3s infinite ease-in-out;
+    position: relative;
+}
+
+.portal::before {
+    content: "";
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.5);
+    animation: rotate 8s linear infinite;
+}
+
+.portal::after {
+    content: "";
+    position: absolute;
+    inset: 24px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.4);
+    animation: rotateReverse 5s linear infinite;
+}
+
+@keyframes portalPulse {
+    0%,100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes rotateReverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+/* ===== Buttons ===== */
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 30px;
+}
+
+button {
+    border: none;
+    border-radius: 18px;
+    padding: 18px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+button:active {
+    transform: scale(0.96);
+}
+
+.single {
+    background:
+        linear-gradient(135deg, #4cc2ff, #295cff);
+    box-shadow:
+        0 6px 20px rgba(0,0,0,0.4),
+        0 0 20px rgba(77,166,255,0.5);
+}
+
+.ten {
+    background:
+        linear-gradient(135deg, #ff9a3c, #ff3c7d);
+    box-shadow:
+        0 6px 20px rgba(0,0,0,0.4),
+        0 0 20px rgba(255,80,120,0.5);
+}
+
+/* ===== Overlay ===== */
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s;
+    z-index: 100;
+}
+
+.overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.result-card {
+    width: 82vw;
+    max-width: 340px;
+    aspect-ratio: 0.7;
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    transform: scale(0.6);
+    opacity: 0;
+    transition: 0.4s cubic-bezier(.17,.89,.32,1.49);
+}
+
+.overlay.show .result-card {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.card-inner {
+    position: absolute;
+    inset: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.rarity {
+    font-size: 1rem;
+    margin-bottom: 8px;
+    opacity: 0.9;
+}
+
+.character {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    font-size: 1.2rem;
+}
+
+/* ===== Flash ===== */
+
+.flash {
+    position: absolute;
+    inset: 0;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.flash.active {
+    animation: flashAnim 0.7s ease;
+}
+
+@keyframes flashAnim {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    100% { opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+    <div class="stars" id="stars"></div>
+
+    <div class="main">
+
+        <div class="logo">
+            ASTRAL GATE
+        </div>
+
+        <div class="gacha-area">
+            <div class="portal"></div>
+        </div>
+
+        <div class="controls">
+            <button class="single" onclick="pull(1)">
+                単発ガチャ
+            </button>
+
+            <button class="ten" onclick="pull(10)">
+                10連ガチャ
+            </button>
+        </div>
+
+    </div>
+
+    <div class="overlay" id="overlay">
+
+        <button class="close" onclick="closeResult()">
+            ✕
+        </button>
+
+        <div class="result-card" id="card">
+            <div class="card-inner">
+                <div class="rarity" id="rarity"></div>
+                <div class="character" id="character"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="flash" id="flash"></div>
+
+</div>
+
+<script>
+const characters = [
+    {
+        name: "ルナ",
+        rarity: "SSR",
+        color: "linear-gradient(160deg,#ffe27a,#ff8c3a,#ff4b91)"
+    },
+    {
+        name: "アーク",
+        rarity: "SSR",
+        color: "linear-gradient(160deg,#a18cff,#4f7cff,#57e5ff)"
+    },
+    {
+        name: "ノア",
+        rarity: "SR",
+        color: "linear-gradient(160deg,#66ffb2,#00c9a7)"
+    },
+    {
+        name: "セナ",
+        rarity: "SR",
+        color: "linear-gradient(160deg,#6dd5fa,#2980b9)"
+    },
+    {
+        name: "ミナ",
+        rarity: "R",
+        color: "linear-gradient(160deg,#cfd9df,#5b6b7a)"
+    }
+];
+
+const overlay = document.getElementById("overlay");
+const card = document.getElementById("card");
+const rarity = document.getElementById("rarity");
+const character = document.getElementById("character");
+const flash = document.getElementById("flash");
+
+/* ===== Generate stars ===== */
+
+const stars = document.getElementById("stars");
+
+for (let i = 0; i < 80; i++) {
+    const s = document.createElement("div");
+    s.className = "star";
+
+    s.style.left = Math.random() * 100 + "%";
+    s.style.top = Math.random() * 100 + "%";
+
+    s.style.animationDelay = Math.random() * 2 + "s";
+
+    stars.appendChild(s);
+}
+
+/* ===== Gacha ===== */
+
+function getRandomCharacter() {
+
+    const r = Math.random();
+
+    if (r < 0.05) {
+        return characters.filter(c => c.rarity === "SSR")[Math.floor(Math.random()*2)];
+    }
+
+    if (r < 0.30) {
+        return characters.filter(c => c.rarity === "SR")[Math.floor(Math.random()*2)];
+    }
+
+    return characters.find(c => c.rarity === "R");
+}
+
+function pull(count) {
+
+    flash.classList.add("active");
+
+    navigator.vibrate?.(120);
+
+    setTimeout(() => {
+
+        const result = getRandomCharacter();
+
+        rarity.textContent = result.rarity;
+        character.textContent = result.name;
+
+        card.style.background = result.color;
+
+        overlay.classList.add("show");
+
+    }, 650);
+
+    setTimeout(() => {
+        flash.classList.remove("active");
+    }, 700);
+}
+
+function closeResult() {
+    overlay.classList.remove("show");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --gold: #E8C96A;
+    --gold2: #F5E09A;
+    --dark: #0A0814;
+    --deep: #100E20;
+    --mid: #1A163A;
+    --accent: #7B5FE0;
+    --accent2: #A87BFF;
+    --ruby: #E04B6F;
+    --teal: #2FCDCD;
+  }
+  body { background: var(--dark); font-family: 'Noto Sans JP', sans-serif; }
+  #app {
+    width: 380px; min-height: 700px;
+    background: var(--dark);
+    position: relative; overflow: hidden;
+  }
+  .bg-stars { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--d, 3s) ease-in-out infinite var(--delay, 0s); opacity: 0.6; }
+  @keyframes twinkle { 0%,100%{opacity:0.2;transform:scale(1)} 50%{opacity:0.9;transform:scale(1.3)} }
+  .nebula {
+    position: absolute; border-radius: 50%; filter: blur(40px); pointer-events: none;
+  }
+  .header {
+    position: relative; z-index: 10;
+    padding: 20px 20px 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .back-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid rgba(232,201,106,0.3);
+    background: rgba(255,255,255,0.05);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--gold); font-size: 16px;
+  }
+  .header-title {
+    font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700;
+    color: var(--gold); letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(232,201,106,0.5);
+  }
+  .gem-display {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(232,201,106,0.2);
+    border-radius: 20px; padding: 6px 12px;
+  }
+  .gem-icon { font-size: 14px; }
+  .gem-count { color: var(--gold2); font-size: 13px; font-weight: 700; }
+  .banner-area {
+    position: relative; z-index: 5; margin: 16px 16px 0;
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(232,201,106,0.25);
+  }
+  .banner-bg {
+    width: 100%; height: 200px; position: relative;
+    background: linear-gradient(135deg, #1a0a2e 0%, #0d1a3a 50%, #1a0a2e 100%);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .banner-glow {
+    position: absolute; width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(123,95,224,0.4) 0%, transparent 70%);
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.5;transform:translate(-50%,-50%) scale(1)} 50%{opacity:1;transform:translate(-50%,-50%) scale(1.2)} }
+  .banner-char {
+    position: relative; z-index: 2; text-align: center;
+  }
+  .char-silhouette {
+    font-size: 72px; display: block;
+    filter: drop-shadow(0 0 20px rgba(168,123,255,0.8));
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .banner-rate {
+    position: absolute; top: 10px; right: 10px;
+    background: linear-gradient(135deg, #E04B6F, #FF7A9C);
+    border-radius: 8px; padding: 4px 10px;
+    color: white; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+  }
+  .banner-info {
+    padding: 12px 16px;
+    background: rgba(16,14,32,0.95);
+  }
+  .char-name {
+    font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700;
+    color: var(--gold); letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(232,201,106,0.4);
+  }
+  .stars-row { display: flex; gap: 2px; margin-top: 4px; }
+  .star-gold { color: var(--gold); font-size: 12px; }
+  .element-badge {
+    float: right; margin-top: -18px;
+    background: rgba(47,205,205,0.15); border: 1px solid rgba(47,205,205,0.4);
+    border-radius: 20px; padding: 3px 10px;
+    color: var(--teal); font-size: 11px; font-weight: 700;
+  }
+  .tabs {
+    display: flex; margin: 14px 16px 0; gap: 8px; position: relative; z-index: 10;
+  }
+  .tab {
+    flex: 1; padding: 8px; border-radius: 10px; text-align: center;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.04);
+    transition: all 0.2s; letter-spacing: 0.5px;
+  }
+  .tab.active {
+    background: rgba(123,95,224,0.2);
+    border-color: rgba(123,95,224,0.5);
+    color: var(--accent2);
+    text-shadow: 0 0 10px rgba(168,123,255,0.5);
+  }
+  .gacha-btns {
+    display: flex; gap: 10px; margin: 14px 16px 0; position: relative; z-index: 10;
+  }
+  .gacha-btn {
+    flex: 1; padding: 14px 8px; border-radius: 14px;
+    border: none; cursor: pointer; position: relative; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    transition: transform 0.15s;
+  }
+  .gacha-btn:active { transform: scale(0.96); }
+  .gacha-btn.single {
+    background: linear-gradient(135deg, #2a2060, #1a1440);
+    border: 1px solid rgba(123,95,224,0.4);
+  }
+  .gacha-btn.multi {
+    background: linear-gradient(135deg, #7B3F00, #4A2800);
+    border: 1px solid rgba(232,201,106,0.5);
+  }
+  .gacha-btn.multi::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(232,201,106,0.1), transparent);
+  }
+  .btn-label { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 400; }
+  .btn-main { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 700; color: white; }
+  .btn-main.gold { color: var(--gold); text-shadow: 0 0 10px rgba(232,201,106,0.5); }
+  .btn-cost {
+    display: flex; align-items: center; gap: 4px;
+    margin-top: 2px;
+  }
+  .cost-gem { font-size: 11px; }
+  .cost-num { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 700; }
+  .cost-num.gold { color: var(--gold2); }
+  .btn-shimmer {
+    position: absolute; top: -50%; left: -50%; width: 20px; height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transform: skewX(-20deg);
+    animation: shimmer 3s infinite;
+  }
+  @keyframes shimmer { 0%{left:-50%} 100%{left:150%} }
+  .pickup-section {
+    margin: 14px 16px 0; position: relative; z-index: 10;
+  }
+  .section-label {
+    font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.4);
+    text-transform: uppercase; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, rgba(232,201,106,0.2), transparent);
+  }
+  .pickup-grid { display: flex; gap: 8px; }
+  .pickup-card {
+    flex: 1; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 10px; text-align: center;
+    cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .pickup-card:hover { border-color: rgba(232,201,106,0.3); background: rgba(232,201,106,0.05); }
+  .pickup-card.ssr { border-color: rgba(232,201,106,0.3); }
+  .pickup-char { font-size: 28px; display: block; margin-bottom: 4px; }
+  .pickup-name { font-size: 10px; color: rgba(255,255,255,0.7); font-weight: 700; }
+  .pickup-stars { font-size: 9px; color: var(--gold); }
+  .ssr-badge {
+    position: absolute; top: 4px; right: 4px;
+    background: linear-gradient(135deg, #E8C96A, #C89B30);
+    border-radius: 4px; padding: 1px 5px;
+    font-size: 8px; font-weight: 900; color: #2A1800; letter-spacing: 0.5px;
+  }
+  .history-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin: 14px 16px 0; position: relative; z-index: 10;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px; padding: 10px 14px;
+  }
+  .pity-info { display: flex; align-items: center; gap: 8px; }
+  .pity-label { font-size: 10px; color: rgba(255,255,255,0.4); }
+  .pity-bar { width: 80px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; }
+  .pity-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width 0.5s; }
+  .pity-count { font-size: 13px; font-weight: 700; color: var(--accent2); }
+  .history-link { font-size: 11px; color: rgba(255,255,255,0.35); cursor: pointer; }
+  .result-overlay {
+    position: absolute; inset: 0; z-index: 100;
+    background: rgba(5,3,15,0.95);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s;
+  }
+  .result-overlay.show { opacity: 1; pointer-events: all; }
+  .result-cards { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 16px; }
+  .result-card {
+    width: 68px; background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; overflow: hidden; text-align: center;
+    animation: cardIn 0.4s ease both;
+  }
+  @keyframes cardIn { from{opacity:0;transform:translateY(20px) scale(0.8)} to{opacity:1;transform:none} }
+  .result-card.ssr { border-color: var(--gold); background: rgba(232,201,106,0.08); }
+  .result-card.sr { border-color: rgba(168,123,255,0.6); background: rgba(123,95,224,0.08); }
+  .result-card-icon { font-size: 32px; padding: 8px 0 4px; display: block; }
+  .result-card-rarity { font-size: 9px; font-weight: 900; letter-spacing: 1px; padding: 3px 0; }
+  .result-card.ssr .result-card-rarity { background: linear-gradient(135deg,#E8C96A,#C89B30); color: #2A1800; }
+  .result-card.sr .result-card-rarity { background: rgba(123,95,224,0.4); color: var(--accent2); }
+  .result-card.r .result-card-rarity { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
+  .result-title {
+    font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900;
+    text-align: center; margin-bottom: 16px;
+    background: linear-gradient(135deg, #E8C96A, #F5E09A, #C89B30);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .result-close {
+    margin-top: 12px; padding: 12px 40px;
+    background: rgba(123,95,224,0.2); border: 1px solid rgba(123,95,224,0.5);
+    border-radius: 24px; color: var(--accent2); font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: 'Noto Sans JP', sans-serif;
+  }
+</style>
+
+</head>
+<body>
+  
+<div id="app">
+  <div class="bg-stars" id="stars"></div>
+  <div class="nebula" style="width:300px;height:300px;background:radial-gradient(circle,rgba(123,95,224,0.12) 0%,transparent 70%);top:-50px;left:-50px;"></div>
+  <div class="nebula" style="width:250px;height:250px;background:radial-gradient(circle,rgba(224,75,111,0.08) 0%,transparent 70%);bottom:100px;right:-80px;"></div>
+
+  <div class="header">
+    <div class="back-btn">‹</div>
+    <div class="header-title">SUMMON</div>
+    <div class="gem-display">
+      <span class="gem-icon">💎</span>
+      <span class="gem-count" id="gemCount">3,000</span>
+    </div>
+  </div>
+
+  <div class="banner-area">
+    <div class="banner-bg">
+      <div class="banner-glow"></div>
+      <div class="banner-char">
+        <span class="char-silhouette">⚔️</span>
+      </div>
+      <div class="banner-rate">ピックアップ確率UP!</div>
+    </div>
+    <div class="banner-info">
+      <span class="element-badge">⚡ 雷属性</span>
+      <div class="char-name">ライトニング・ヴァル</div>
+      <div class="stars-row">
+        <span class="star-gold">★★★★★</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.4);margin-left:6px;">SSR</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active">✦ ピックアップ</div>
+    <div class="tab">通常召喚</div>
+    <div class="tab">武器召喚</div>
+  </div>
+
+  <div class="gacha-btns">
+    <button class="gacha-btn single" onclick="doGacha(1)">
+      <span class="btn-label">単発</span>
+      <span class="btn-main">SUMMON</span>
+      <div class="btn-cost">
+        <span class="cost-gem">💎</span>
+        <span class="cost-num">300</span>
+      </div>
+    </button>
+    <button class="gacha-btn multi" onclick="doGacha(10)">
+      <div class="btn-shimmer"></div>
+      <span class="btn-label">10連</span>
+      <span class="btn-main gold">MULTI SUMMON</span>
+      <div class="btn-cost">
+        <span class="cost-gem">💎</span>
+        <span class="cost-num gold">2,700</span>
+      </div>
+    </button>
+  </div>
+
+  <div class="pickup-section">
+    <div class="section-label">ピックアップキャラ</div>
+    <div class="pickup-grid">
+      <div class="pickup-card ssr">
+        <div class="ssr-badge">SSR</div>
+        <span class="pickup-char">⚔️</span>
+        <div class="pickup-name">ヴァル</div>
+        <div class="pickup-stars">★★★★★</div>
+      </div>
+      <div class="pickup-card">
+        <span class="pickup-char">🌊</span>
+        <div class="pickup-name">アクア</div>
+        <div class="pickup-stars" style="color:var(--accent2)">★★★★</div>
+      </div>
+      <div class="pickup-card">
+        <span class="pickup-char">🔥</span>
+        <div class="pickup-name">フレア</div>
+        <div class="pickup-stars" style="color:var(--accent2)">★★★★</div>
+      </div>
+      <div class="pickup-card">
+        <span class="pickup-char">🌙</span>
+        <div class="pickup-name">ルナ</div>
+        <div class="pickup-stars" style="color:var(--accent2)">★★★★</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="history-bar">
+    <div class="pity-info">
+      <span class="pity-label">天井まで</span>
+      <div class="pity-bar">
+        <div class="pity-fill" id="pityFill" style="width:38%"></div>
+      </div>
+      <span class="pity-count" id="pityCount">62</span>
+    </div>
+    <span class="history-link">召喚履歴 ›</span>
+  </div>
+
+  <div class="result-overlay" id="resultOverlay">
+    <div class="result-title" id="resultTitle">SUMMON RESULT</div>
+    <div class="result-cards" id="resultCards"></div>
+    <button class="result-close" onclick="closeResult()">閉じる</button>
+  </div>
+</div>
+
+<script>
+const starsEl = document.getElementById('stars');
+for(let i=0;i<40;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  const sz=Math.random()*2+1;
+  s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:-${Math.random()*4}s`;
+  starsEl.appendChild(s);
+}
+
+const pool=[
+  {icon:'⚔️',name:'ヴァル',rarity:'ssr',weight:0.5},
+  {icon:'🌊',name:'アクア',rarity:'sr',weight:4},
+  {icon:'🔥',name:'フレア',rarity:'sr',weight:4},
+  {icon:'🌙',name:'ルナ',rarity:'sr',weight:4},
+  {icon:'🗡️',name:'ブレード',rarity:'sr',weight:4},
+  {icon:'🛡️',name:'シールド',rarity:'r',weight:25},
+  {icon:'🏹',name:'アーチャー',rarity:'r',weight:25},
+  {icon:'🌿',name:'リーフ',rarity:'r',weight:25},
+  {icon:'⚡',name:'サンダー',rarity:'r',weight:8.5},
+];
+
+let pity=38;
+let gems=3000;
+
+function draw(){
+  const r=Math.random()*100;
+  let acc=0;
+  for(const c of pool){acc+=c.weight;if(r<acc)return c;}
+  return pool[pool.length-1];
+}
+
+function doGacha(n){
+  const cost=n===1?300:2700;
+  if(gems<cost){alert('宝石が足りません！');return;}
+  gems-=cost;
+  document.getElementById('gemCount').textContent=gems.toLocaleString();
+
+  const results=[];
+  for(let i=0;i<n;i++){
+    pity++;
+    let c;
+    if(pity>=100){c=pool[0];pity=0;}
+    else c=draw();
+    results.push(c);
+  }
+
+  const pityLeft=100-pity;
+  document.getElementById('pityCount').textContent=pityLeft;
+  document.getElementById('pityFill').style.width=`${pity}%`;
+
+  showResult(results,n);
+}
+
+function showResult(results,n){
+  const el=document.getElementById('resultCards');
+  el.innerHTML='';
+  const title=document.getElementById('resultTitle');
+  const hasSsr=results.some(r=>r.rarity==='ssr');
+  title.textContent=hasSsr?'✦ NEW HERO ✦':'SUMMON RESULT';
+
+  results.forEach((c,i)=>{
+    const div=document.createElement('div');
+    div.className=`result-card ${c.rarity}`;
+    div.style.animationDelay=`${i*0.06}s`;
+    div.innerHTML=`<span class="result-card-icon">${c.icon}</span><div class="result-card-rarity">${c.rarity.toUpperCase()}</div>`;
+    el.appendChild(div);
+  });
+
+  document.getElementById('resultOverlay').classList.add('show');
+}
+
+function closeResult(){
+  document.getElementById('resultOverlay').classList.remove('show');
+}
+</script>
+
+</body>
+</html>

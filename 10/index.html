@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box
+  }
+
+  body {
+    background: #0e0b07;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    overflow: hidden
+  }
+
+  #app {
+    width: 380px;
+    min-height: 780px;
+    background: #0e0b07;
+    position: relative;
+    overflow: hidden
+  }
+
+  .parchment-grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(200, 170, 100, .015) 2px, rgba(200, 170, 100, .015) 4px), repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(200, 170, 100, .01) 3px, rgba(200, 170, 100, .01) 6px)
+  }
+
+  .vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(5, 3, 0, .7) 100%)
+  }
+
+  .top-ornament {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    padding: 22px 20px 8px
+  }
+
+  .ornament-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 4px
+  }
+
+  .orn-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #9a7c3a, transparent)
+  }
+
+  .orn-diamond {
+    width: 6px;
+    height: 6px;
+    background: #9a7c3a;
+    transform: rotate(45deg);
+    flex-shrink: 0
+  }
+
+  .title-main {
+    font-family: 'IM Fell English', serif;
+    font-size: 11px;
+    letter-spacing: 5px;
+    color: #9a7c3a;
+    text-transform: uppercase;
+    font-style: italic
+  }
+
+  .title-sub {
+    font-family: 'IM Fell English', serif;
+    font-size: 22px;
+    color: #e8d49a;
+    letter-spacing: 2px;
+    margin: 2px 0
+  }
+
+  .gem-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 6px
+  }
+
+  .gem-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid rgba(154, 124, 58, .5);
+    border-radius: 20px;
+    padding: 4px 12px;
+    background: rgba(154, 124, 58, .08)
+  }
+
+  .gem-count {
+    font-size: 13px;
+    color: #e8d49a;
+    font-weight: 300;
+    letter-spacing: 1px
+  }
+
+  .gem-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #9a7c3a
+  }
+
+  .portrait-stage {
+    position: relative;
+    z-index: 5;
+    margin: 12px 20px 0;
+    border: 1px solid rgba(154, 124, 58, .3);
+    background: rgba(8, 6, 2, .8)
+  }
+
+  .portrait-frame {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden
+  }
+
+  .portrait-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%
+  }
+
+  .portrait-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(0deg, rgba(5, 3, 0, .95) 60%, transparent);
+    padding: 16px
+  }
+
+  .composer-name {
+    font-family: 'IM Fell English', serif;
+    font-size: 20px;
+    color: #e8d49a;
+    letter-spacing: 1px
+  }
+
+  .composer-years {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    color: #9a7c3a;
+    letter-spacing: 2px;
+    font-style: italic;
+    margin-top: 2px
+  }
+
+  .rarity-stars {
+    color: #c9a84c;
+    font-size: 14px;
+    margin-top: 4px;
+    letter-spacing: 3px
+  }
+
+  .corner-ornament {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: #9a7c3a;
+    border-style: solid;
+    opacity: .6
+  }
+
+  .co-tl {
+    top: 8px;
+    left: 8px;
+    border-width: 1px 0 0 1px
+  }
+
+  .co-tr {
+    top: 8px;
+    right: 8px;
+    border-width: 1px 1px 0 0
+  }
+
+  .co-bl {
+    bottom: 8px;
+    left: 8px;
+    border-width: 0 0 1px 1px
+  }
+
+  .co-br {
+    bottom: 8px;
+    right: 8px;
+    border-width: 0 1px 1px 0
+  }
+
+  .work-panel {
+    position: relative;
+    z-index: 5;
+    margin: 0 20px;
+    border: 1px solid rgba(154, 124, 58, .25);
+    border-top: none;
+    background: rgba(12, 9, 4, .9);
+    padding: 12px 14px
+  }
+
+  .work-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #6b5528;
+    text-transform: uppercase;
+    margin-bottom: 5px
+  }
+
+  .work-title {
+    font-family: 'IM Fell English', serif;
+    font-size: 15px;
+    color: #d4b87a;
+    font-style: italic;
+    line-height: 1.4
+  }
+
+  .work-key {
+    font-size: 11px;
+    color: #7a6040;
+    letter-spacing: 1px;
+    margin-top: 3px
+  }
+
+  .divider-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 14px 20px 0;
+    position: relative;
+    z-index: 5
+  }
+
+  .div-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(154, 124, 58, .3), transparent)
+  }
+
+  .div-text {
+    font-size: 10px;
+    color: #6b5528;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    white-space: nowrap
+  }
+
+  .btns {
+    display: flex;
+    gap: 10px;
+    margin: 10px 20px 0;
+    position: relative;
+    z-index: 5
+  }
+
+  .gacha-btn {
+    flex: 1;
+    cursor: pointer;
+    border: 1px solid rgba(154, 124, 58, .5);
+    background: rgba(154, 124, 58, .08);
+    padding: 14px 8px;
+    position: relative;
+    overflow: hidden;
+    transition: background .2s
+  }
+
+  .gacha-btn:hover {
+    background: rgba(154, 124, 58, .14)
+  }
+
+  .gacha-btn:active {
+    transform: scale(.98)
+  }
+
+  .btn-inner {
+    text-align: center
+  }
+
+  .btn-type {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #6b5528;
+    text-transform: uppercase;
+    display: block
+  }
+
+  .btn-cta {
+    font-family: 'IM Fell English', serif;
+    font-size: 16px;
+    color: #e8d49a;
+    display: block;
+    margin: 2px 0
+  }
+
+  .btn-cost {
+    font-size: 11px;
+    color: #9a7c3a;
+    letter-spacing: 1px
+  }
+
+  .btn-shimmer {
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(232, 212, 154, .12), transparent);
+    transform: skewX(-15deg);
+    animation: shm 3s infinite
+  }
+
+  @keyframes shm {
+    0% {
+      left: -60%
+    }
+
+    100% {
+      left: 160%
+    }
+  }
+
+  .btn-highlight {
+    border-color: rgba(200, 168, 76, .7);
+    background: rgba(154, 124, 58, .15)
+  }
+
+  .pity-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 20px 0;
+    position: relative;
+    z-index: 5
+  }
+
+  .pity-text {
+    font-size: 10px;
+    color: #6b5528;
+    letter-spacing: 1px;
+    font-style: italic
+  }
+
+  .pity-bar {
+    flex: 1;
+    height: 2px;
+    background: rgba(154, 124, 58, .15);
+    margin: 0 10px
+  }
+
+  .pity-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6b5528, #c9a84c);
+    transition: width .6s
+  }
+
+  .pity-num {
+    font-family: 'IM Fell English', serif;
+    font-size: 13px;
+    color: #9a7c3a
+  }
+
+  .bottom-ornament {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 20px 4px;
+    position: relative;
+    z-index: 5
+  }
+
+  .bot-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(154, 124, 58, .2), transparent)
+  }
+
+  .bot-dot {
+    width: 4px;
+    height: 4px;
+    background: rgba(154, 124, 58, .4);
+    transform: rotate(45deg);
+    flex-shrink: 0
+  }
+
+  #stageCanvas {
+    position: absolute;
+    inset: 0;
+    width: 380px;
+    height: 780px;
+    z-index: 60;
+    display: none;
+    pointer-events: all
+  }
+
+  #resultScreen {
+    position: absolute;
+    inset: 0;
+    z-index: 80;
+    background: #0a0700;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 0
+  }
+
+  #resultCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%
+  }
+
+  .result-inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center
+  }
+
+  .result-ornament {
+    text-align: center;
+    padding: 28px 20px 12px
+  }
+
+  .result-orn-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 6px
+  }
+
+  .result-title {
+    font-family: 'IM Fell English', serif;
+    font-size: 18px;
+    color: #e8d49a;
+    letter-spacing: 3px;
+    font-style: italic;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity .6s, transform .6s
+  }
+
+  .result-title.show {
+    opacity: 1;
+    transform: none
+  }
+
+  .result-portrait {
+    width: 140px;
+    height: 175px;
+    border: 1px solid rgba(154, 124, 58, .5);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(.9);
+    transition: opacity .7s .2s, transform .7s .2s
+  }
+
+  .result-portrait.show {
+    opacity: 1;
+    transform: none
+  }
+
+  .res-co {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: #9a7c3a;
+    border-style: solid;
+    opacity: .7
+  }
+
+  .res-co-tl {
+    top: 5px;
+    left: 5px;
+    border-width: 1px 0 0 1px
+  }
+
+  .res-co-tr {
+    top: 5px;
+    right: 5px;
+    border-width: 1px 1px 0 0
+  }
+
+  .res-co-bl {
+    bottom: 5px;
+    left: 5px;
+    border-width: 0 0 1px 1px
+  }
+
+  .res-co-br {
+    bottom: 5px;
+    right: 5px;
+    border-width: 0 1px 1px 0
+  }
+
+  .result-name {
+    font-family: 'IM Fell English', serif;
+    font-size: 22px;
+    color: #e8d49a;
+    text-align: center;
+    margin-top: 14px;
+    opacity: 0;
+    transition: opacity .5s .5s
+  }
+
+  .result-name.show {
+    opacity: 1
+  }
+
+  .result-years {
+    font-size: 12px;
+    color: #9a7c3a;
+    letter-spacing: 2px;
+    font-style: italic;
+    text-align: center;
+    margin-top: 2px;
+    opacity: 0;
+    transition: opacity .5s .6s
+  }
+
+  .result-years.show {
+    opacity: 1
+  }
+
+  .result-stars {
+    color: #c9a84c;
+    font-size: 16px;
+    letter-spacing: 4px;
+    text-align: center;
+    margin-top: 6px;
+    opacity: 0;
+    transition: opacity .5s .7s
+  }
+
+  .result-stars.show {
+    opacity: 1
+  }
+
+  .result-work {
+    margin: 12px 30px 0;
+    border: 1px solid rgba(154, 124, 58, .3);
+    padding: 10px 14px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity .5s .85s
+  }
+
+  .result-work.show {
+    opacity: 1
+  }
+
+  .result-work-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #6b5528;
+    text-transform: uppercase;
+    margin-bottom: 4px
+  }
+
+  .result-work-title {
+    font-family: 'IM Fell English', serif;
+    font-size: 14px;
+    color: #d4b87a;
+    font-style: italic
+  }
+
+  .result-close {
+    margin-top: 18px;
+    padding: 10px 40px;
+    border: 1px solid rgba(154, 124, 58, .4);
+    background: transparent;
+    color: #9a7c3a;
+    font-family: 'IM Fell English', serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .5s 1.2s;
+    font-style: italic
+  }
+
+  .result-close.show {
+    opacity: 1
+  }
+
+  .result-rarity-badge {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #6b5528;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity .5s .75s
+  }
+
+  .result-rarity-badge.show {
+    opacity: 1
+  }
+
+  .rarity-SSR .result-rarity-badge {
+    color: #c9a84c
+  }
+
+  .rarity-SR .result-rarity-badge {
+    color: #8ab4d4
+  }
+</style>
+
+<body>
+
+  <div id="app">
+    <div class="parchment-grain"></div>
+    <div class="vignette"></div>
+    <div class="top-ornament">
+      <div class="ornament-line">
+        <div class="orn-rule"></div>
+        <div class="orn-diamond"></div>
+        <div class="orn-rule"></div>
+      </div>
+      <div class="title-main">Musica Aeterna</div>
+      <div class="title-sub">楽聖召喚</div>
+      <div class="ornament-line" style="margin-top:6px">
+        <div class="orn-rule"></div>
+        <div class="orn-diamond"></div>
+        <div class="orn-rule"></div>
+      </div>
+      <div class="gem-row">
+        <div class="gem-pill">
+          <div class="gem-dot"></div>
+          <span class="gem-count" id="gemCount">3,000</span>
+          <span style="font-size:10px;color:#6b5528;letter-spacing:1px"> 金貨</span>
+        </div>
+      </div>
+    </div>
+    <div class="portrait-stage">
+      <div class="portrait-frame" id="portraitFrame">
+        <canvas id="portraitCanvas" width="340" height="220"></canvas>
+        <div class="corner-ornament co-tl"></div>
+        <div class="corner-ornament co-tr"></div>
+        <div class="corner-ornament co-bl"></div>
+        <div class="corner-ornament co-br"></div>
+        <div class="portrait-info">
+          <div class="rarity-stars" id="mainStars">★★★★★</div>
+          <div class="composer-name" id="mainName">Ludwig van Beethoven</div>
+          <div class="composer-years" id="mainYears">1770 – 1827 · ドイツ</div>
+        </div>
+      </div>
+    </div>
+    <div class="work-panel">
+      <div class="work-label">代表作</div>
+      <div class="work-title" id="mainWork">交響曲 第9番 ニ短調 Op.125「合唱」</div>
+      <div class="work-key" id="mainKey">Choral · 1824年初演</div>
+    </div>
+    <div class="divider-row">
+      <div class="div-rule"></div>
+      <div class="div-text">召喚の儀</div>
+      <div class="div-rule"></div>
+    </div>
+    <div class="btns">
+      <button class="gacha-btn" id="btn1" onclick="doGacha(1)">
+        <div class="btn-shimmer"></div>
+        <div class="btn-inner">
+          <span class="btn-type">単独召喚</span>
+          <span class="btn-cta">Summon ×1</span>
+          <span class="btn-cost">金貨 300</span>
+        </div>
+      </button>
+      <button class="gacha-btn btn-highlight" id="btn10" onclick="doGacha(10)">
+        <div class="btn-shimmer" style="animation-delay:-.8s"></div>
+        <div class="btn-inner">
+          <span class="btn-type">十連召喚</span>
+          <span class="btn-cta">Summon ×10</span>
+          <span class="btn-cost">金貨 2,700</span>
+        </div>
+      </button>
+    </div>
+    <div class="pity-row">
+      <span class="pity-text">天井まで</span>
+      <div class="pity-bar">
+        <div class="pity-fill" id="pityFill" style="width:38%"></div>
+      </div>
+      <span class="pity-num" id="pityCount">62</span>
+    </div>
+    <div class="bottom-ornament">
+      <div class="bot-rule"></div>
+      <div class="bot-dot"></div>
+      <div class="bot-rule"></div>
+    </div>
+
+    <canvas id="stageCanvas"></canvas>
+
+    <div id="resultScreen">
+      <canvas id="resultCanvas"></canvas>
+      <div class="result-inner">
+        <div class="result-ornament">
+          <div class="result-orn-line">
+            <div class="orn-rule"></div>
+            <div class="orn-diamond"></div>
+            <div class="orn-rule"></div>
+          </div>
+          <div class="result-title" id="resultTitle">召喚成功</div>
+        </div>
+        <div class="result-portrait" id="resultPortrait">
+          <canvas id="resultPortCanvas" width="140" height="175"></canvas>
+          <div class="res-co res-co-tl"></div>
+          <div class="res-co res-co-tr"></div>
+          <div class="res-co res-co-bl"></div>
+          <div class="res-co res-co-br"></div>
+        </div>
+        <div class="result-rarity-badge" id="resultRarity">SSR · 超稀少</div>
+        <div class="result-stars" id="resultStars">★★★★★</div>
+        <div class="result-name" id="resultName">Beethoven</div>
+        <div class="result-years" id="resultYears">1770 – 1827 · ドイツ</div>
+        <div class="result-work" id="resultWork">
+          <div class="result-work-label">代表作</div>
+          <div class="result-work-title" id="resultWorkTitle">交響曲 第9番</div>
+        </div>
+        <button class="result-close" id="closeBtn" onclick="closeResult()">— 閉じる —</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const W = 380, H = 780;
+    const composers = [
+      { name: 'Ludwig van Beethoven', short: 'Beethoven', years: '1770–1827', nation: 'ドイツ', rarity: 'SSR', stars: '★★★★★', work: '交響曲 第9番 ニ短調 Op.125「合唱」', key: 'Choral · 1824年初演', hair: '#3a2a1a', skin: '#c9a07a', coat: '#1a1410', accent: '#6b3a1f', weight: 1 },
+      { name: 'Wolfgang Amadeus Mozart', short: 'Mozart', years: '1756–1791', nation: 'オーストリア', rarity: 'SSR', stars: '★★★★★', work: 'レクイエム ニ短調 K.626', key: 'Requiem · 未完成', hair: '#d4c8a0', skin: '#e8c9a0', coat: '#2a1a4a', accent: '#8a6a2a', weight: 1 },
+      { name: 'Johann Sebastian Bach', short: 'Bach', years: '1685–1750', nation: 'ドイツ', rarity: 'SSR', stars: '★★★★★', work: 'マタイ受難曲 BWV 244', key: 'St. Matthew Passion · 1727年', hair: '#d8cdb4', skin: '#c8a882', coat: '#1e1814', accent: '#5a4a2a', weight: 1 },
+      { name: 'Frédéric Chopin', short: 'Chopin', years: '1810–1849', nation: 'ポーランド', rarity: 'SR', stars: '★★★★', work: '夜想曲 第20番 嬰ハ短調「遺作」', key: 'Nocturne · 1830年頃', hair: '#8a7040', skin: '#d4a878', coat: '#0e1a24', accent: '#4a6a8a', weight: 3 },
+      { name: 'Franz Schubert', short: 'Schubert', years: '1797–1828', nation: 'オーストリア', rarity: 'SR', stars: '★★★★', work: '弦楽四重奏曲「死と乙女」D.810', key: 'String Quartet · 1824年', hair: '#2a1a0a', skin: '#c0906a', coat: '#1a1a2a', accent: '#4a3a6a', weight: 3 },
+      { name: 'Claude Debussy', short: 'Debussy', years: '1862–1918', nation: 'フランス', rarity: 'SR', stars: '★★★★', work: '月の光（ベルガマスク組曲）', key: 'Clair de lune · 1905年', hair: '#3a2a1a', skin: '#c8a082', coat: '#1a2a1a', accent: '#2a4a3a', weight: 3 },
+      { name: 'Johannes Brahms', short: 'Brahms', years: '1833–1897', nation: 'ドイツ', rarity: 'R', stars: '★★★', work: '交響曲 第1番 ハ短調 Op.68', key: 'Symphony No.1 · 1876年', hair: '#7a6a5a', skin: '#b89070', coat: '#1a1a1a', accent: '#4a4a4a', weight: 8 },
+      { name: 'Pyotr Tchaikovsky', short: 'Tchaikovsky', years: '1840–1893', nation: 'ロシア', rarity: 'R', stars: '★★★', work: '白鳥の湖 Op.20', key: 'Swan Lake · 1877年初演', hair: '#9a8a7a', skin: '#c0906a', coat: '#1a0a1a', accent: '#4a2a4a', weight: 8 },
+      { name: 'Antonio Vivaldi', short: 'Vivaldi', years: '1678–1741', nation: 'イタリア', rarity: 'R', stars: '★★★', work: '四季 Op.8 より「春」', key: 'The Four Seasons · 1725年', hair: '#c8a060', skin: '#d4a07a', coat: '#6a1a0a', accent: '#c8602a', weight: 8 },
+    ];
+
+    function drawPortrait(canvas, c, w, h) {
+      const ctx = canvas.getContext('2d');
+      canvas.width = w; canvas.height = h;
+      const cx = w / 2, cy = h / 2;
+      ctx.fillStyle = '#0a0800'; ctx.fillRect(0, 0, w, h);
+      const bg = ctx.createRadialGradient(cx, cy * .8, 0, cx, cy * .8, w * .7);
+      bg.addColorStop(0, '#1a1408'); bg.addColorStop(1, '#050400');
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = 'rgba(160,130,60,.04)'; ctx.lineWidth = .5;
+      for (let i = 0; i < h; i += 6) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke(); }
+      ctx.fillStyle = c.coat; ctx.beginPath(); ctx.ellipse(cx, h * .95, w * .38, h * .38, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = c.skin; ctx.beginPath(); ctx.ellipse(cx, h * .56, w * .08, h * .1, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = c.skin; ctx.beginPath(); ctx.ellipse(cx, h * .38, w * .19, h * .22, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = c.hair; ctx.beginPath(); ctx.ellipse(cx, h * .28, w * .2, h * .14, 0, Math.PI, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(cx - w * .17, h * .36, w * .05, h * .1, -.3, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(cx + w * .17, h * .36, w * .05, h * .1, .3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#1a0e06';
+      ctx.beginPath(); ctx.ellipse(cx - w * .07, h * .37, w * .03, h * .018, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(cx + w * .07, h * .37, w * .03, h * .018, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(255,240,200,.4)';
+      ctx.beginPath(); ctx.arc(cx - w * .06, h * .365, w * .008, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx + w * .08, h * .365, w * .008, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#9a7848'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(cx, h * .39); ctx.quadraticCurveTo(cx + w * .04, h * .43, cx, h * .44); ctx.stroke();
+      ctx.strokeStyle = '#7a5030'; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(cx - w * .05, h * .47); ctx.quadraticCurveTo(cx, h * .485, cx + w * .05, h * .47); ctx.stroke();
+      ctx.fillStyle = '#e8dfc0';
+      ctx.beginPath(); ctx.moveTo(cx - w * .08, h * .52); ctx.lineTo(cx, h * .58); ctx.lineTo(cx + w * .08, h * .52); ctx.lineTo(cx + w * .12, h * .55); ctx.lineTo(cx, h * .64); ctx.lineTo(cx - w * .12, h * .55); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = c.accent; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(cx + w * .05, h * .6); ctx.lineTo(cx + w * .05, h * .75); ctx.stroke();
+      const overlay = ctx.createRadialGradient(cx, cy * .6, 0, cx, cy * .6, w * .9);
+      overlay.addColorStop(0, 'rgba(180,140,60,.06)'); overlay.addColorStop(1, 'rgba(80,50,10,.25)');
+      ctx.fillStyle = overlay; ctx.fillRect(0, 0, w, h);
+      const vig = ctx.createRadialGradient(cx, cy, w * .2, cx, cy, w * .8);
+      vig.addColorStop(0, 'transparent'); vig.addColorStop(1, 'rgba(0,0,0,.65)');
+      ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+    }
+
+    drawPortrait(document.getElementById('portraitCanvas'), composers[0], 340, 220);
+
+    let gems = 3000, pity = 38;
+    function pick() {
+      const total = composers.reduce((s, c) => s + c.weight, 0);
+      let r = Math.random() * total;
+      for (const c of composers) { r -= c.weight; if (r <= 0) return c; }
+      return composers[0];
+    }
+
+    function doGacha(n) {
+      const cost = n === 1 ? 300 : 2700;
+      if (gems < cost) return;
+      gems -= cost;
+      document.getElementById('gemCount').textContent = gems.toLocaleString();
+      document.getElementById('btn1').disabled = true;
+      document.getElementById('btn10').disabled = true;
+      pity += n;
+      let result;
+      if (pity >= 100) { result = composers.find(c => c.rarity === 'SSR'); pity = 0; }
+      else result = pick();
+      runCinematicTransition(result);
+    }
+
+    // ============================================================
+    //  CINEMATIC TRANSITION
+    // ============================================================
+    function runCinematicTransition(composer) {
+      const cv = document.getElementById('stageCanvas');
+      cv.width = W; cv.height = H;
+      cv.style.display = 'block';
+      const ctx = cv.getContext('2d');
+      const isSSR = composer.rarity === 'SSR';
+      const isSR = composer.rarity === 'SR';
+
+      // colour palette per rarity
+      const gold = '#c9a84c', goldDim = '#7a5f28';
+      const silver = '#8ab4d4', silverDim = '#3a5a74';
+      const sepia = '#6b5528', sepiaDim = '#3a2a10';
+      const mainCol = isSSR ? gold : isSR ? silver : sepia;
+      const dimCol = isSSR ? goldDim : isSR ? silverDim : sepiaDim;
+      const noteChars = ['♩', '♪', '♫', '♬', '𝄞'];
+
+      // ── particle pool ──
+      const particles = [];
+      function spawnNote(x, y, vx, vy, life, size, col) {
+        particles.push({ type: 'note', x, y, vx, vy, life, maxLife: life, size, col, char: noteChars[Math.floor(Math.random() * noteChars.length)] });
+      }
+      function spawnSpark(x, y, vx, vy, life, size, col) {
+        particles.push({ type: 'spark', x, y, vx, vy, vy2: 0, life, maxLife: life, size, col });
+      }
+      function spawnRing(x, y, r, col, life) {
+        particles.push({ type: 'ring', x, y, r, maxR: r, life, maxLife: life, col });
+      }
+
+      // ── sheet music staff lines (scroll from right) ──
+      const staffLines = [];
+      for (let row = 0; row < 6; row++) {
+        for (let line = 0; line < 5; line++) {
+          staffLines.push({ row, line, x: W + 60, targetX: -(W + 60), speed: 2.5 + row * .4, alpha: 0, notes: [] });
+        }
+      }
+
+      // ── wax seal data ──
+      let sealProgress = 0;
+
+      // ── phases ──
+      // 0: darkness+candle   1: staff scroll   2: seal stamp
+      // 3: light burst        4: portrait reveal  5: done
+      let phase = 0, phaseT = 0, animId = null;
+
+      // off-screen portrait canvas
+      const portOff = document.createElement('canvas');
+      portOff.width = 220; portOff.height = 280;
+      drawPortrait(portOff, composer, 220, 280);
+
+      // portrait reveal alpha
+      let portAlpha = 0;
+      // curtain split
+      let curtainSplit = 0; // 0=closed, 1=fully open
+
+      function tick() {
+        ctx.clearRect(0, 0, W, H);
+        phaseT++;
+
+        // ── PHASE 0: Candlelight darkness ──────────────────────
+        if (phase === 0) {
+          ctx.fillStyle = '#050300'; ctx.fillRect(0, 0, W, H);
+          // flickering candle glow at centre
+          const flicker = .85 + Math.sin(phaseT * .7) * .1 + Math.random() * .05;
+          const glowR = 60 + Math.sin(phaseT * .4) * 8;
+          const g = ctx.createRadialGradient(W / 2, H * .55, 0, W / 2, H * .55, glowR * flicker);
+          g.addColorStop(0, `rgba(255,210,100,.18)`);
+          g.addColorStop(.4, `rgba(180,120,40,.07)`);
+          g.addColorStop(1, 'transparent');
+          ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+          // candle flame
+          const fx = W / 2, fy = H * .52;
+          ctx.fillStyle = `rgba(255,200,80,${.6 + Math.random() * .3})`;
+          ctx.beginPath();
+          ctx.moveTo(fx, fy - 18 + Math.random() * 4);
+          ctx.quadraticCurveTo(fx + 6, fy - 6, fx + 3, fy + 2);
+          ctx.quadraticCurveTo(fx, fy + 4, fx - 3, fy + 2);
+          ctx.quadraticCurveTo(fx - 6, fy - 6, fx, fy - 18 + Math.random() * 4);
+          ctx.fill();
+          // candle body
+          ctx.fillStyle = '#e8d4a0';
+          ctx.fillRect(fx - 5, fy + 2, 10, 20);
+          // spawn floating notes from flame
+          if (phaseT % 6 === 0) spawnNote(fx + (Math.random() - .5) * 10, fy - 15, (Math.random() - .5) * .8, -1.2 - Math.random() * 1, 70 + Math.random() * 30, 12 + Math.random() * 8, mainCol + '80');
+          if (phaseT > 70) { phase = 1; phaseT = 0; }
+        }
+
+        // ── PHASE 1: Staff paper scrolls in ───────────────────
+        else if (phase === 1) {
+          ctx.fillStyle = '#050300'; ctx.fillRect(0, 0, W, H);
+          // paper bg fades in
+          const paperAlpha = Math.min(1, phaseT / 30);
+          ctx.fillStyle = `rgba(18,14,6,${paperAlpha})`; ctx.fillRect(0, 0, W, H);
+
+          // animate staff strips
+          const stripH = H / 6;
+          for (let row = 0; row < 6; row++) {
+            const y0 = row * stripH;
+            const stripDelay = row * 8;
+            const stripT = Math.max(0, phaseT - stripDelay);
+            const progress = Math.min(1, stripT / 50);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            // draw 5 staff lines per strip
+            const staffY0 = y0 + stripH * .3;
+            const staffSpacing = stripH * .08;
+            for (let l = 0; l < 5; l++) {
+              const ly = staffY0 + l * staffSpacing;
+              const lineAlpha = eased * .35;
+              ctx.strokeStyle = `rgba(154,124,58,${lineAlpha})`;
+              ctx.lineWidth = .5;
+              ctx.beginPath(); ctx.moveTo(0, ly); ctx.lineTo(W * eased, ly); ctx.stroke();
+            }
+            // clef symbol at start of each staff
+            if (progress > .5) {
+              ctx.font = `${16 + row % 2 * 4}px Georgia`;
+              ctx.fillStyle = `rgba(154,124,58,${(eased - .5) * 2 * .4})`;
+              ctx.fillText('𝄞', 8, staffY0 + staffSpacing * 4);
+            }
+          }
+
+          // floating notes rise
+          if (phaseT % 4 === 0) {
+            spawnNote(
+              20 + Math.random() * 340,
+              H + 10,
+              (Math.random() - .5) * .6,
+              -1.5 - Math.random() * 2,
+              100 + Math.random() * 60,
+              10 + Math.random() * 10,
+              mainCol + '70'
+            );
+          }
+
+          // gold horizontal rule sweeps across
+          if (phaseT > 40) {
+            const ruleProgress = Math.min(1, (phaseT - 40) / 30);
+            const ruleEased = ruleProgress < .5 ? 2 * ruleProgress * ruleProgress : 1 - Math.pow(-2 * ruleProgress + 2, 2) / 2;
+            ctx.strokeStyle = `rgba(154,124,58,${ruleEased * .6})`;
+            ctx.lineWidth = .8;
+            [H * .35, H * .65].forEach(ry => {
+              ctx.beginPath(); ctx.moveTo(0, ry); ctx.lineTo(W * ruleEased, ry); ctx.stroke();
+            });
+            // ornate diamond at midpoint
+            if (ruleProgress > .8) {
+              const da = (ruleProgress - .8) * 5;
+              const dx = W / 2, dy = H * .35;
+              ctx.save(); ctx.translate(dx, dy); ctx.rotate(Math.PI / 4);
+              ctx.strokeStyle = `rgba(200,168,76,${da * .8})`; ctx.lineWidth = 1;
+              ctx.strokeRect(-5, -5, 10, 10); ctx.restore();
+            }
+          }
+          if (phaseT > 90) { phase = 2; phaseT = 0; }
+        }
+
+        // ── PHASE 2: Wax seal stamping ─────────────────────────
+        else if (phase === 2) {
+          // keep paper bg
+          ctx.fillStyle = 'rgba(10,8,2,.95)'; ctx.fillRect(0, 0, W, H);
+          // staff lines faintly
+          const stripH = H / 6;
+          for (let row = 0; row < 6; row++) {
+            const y0 = row * stripH; const staffY0 = y0 + stripH * .3; const staffSpacing = stripH * .08;
+            for (let l = 0; l < 5; l++) {
+              ctx.strokeStyle = 'rgba(154,124,58,.12)'; ctx.lineWidth = .5;
+              ctx.beginPath(); ctx.moveTo(0, staffY0 + l * staffSpacing); ctx.lineTo(W, staffY0 + l * staffSpacing); ctx.stroke();
+            }
+          }
+
+          // seal grows in with stamp thud effect
+          sealProgress = Math.min(1, phaseT / 25);
+          const sealEased = sealProgress < .5 ? 4 * sealProgress * sealProgress * sealProgress : 1 - Math.pow(-2 * sealProgress + 2, 3) / 2;
+          const scale = sealEased * (1 + (1 - sealEased) * .3); // overshoot
+          const cx2 = W / 2, cy2 = H / 2;
+          const sr = 55 * scale;
+
+          if (sealProgress > .01) {
+            // wax circle
+            ctx.save(); ctx.translate(cx2, cy2); ctx.scale(scale, scale);
+            const waxG = ctx.createRadialGradient(0, 0, 0, 0, 0, 55);
+            waxG.addColorStop(0, isSSR ? '#8a3020' : isSR ? '#1a3a60' : '#2a1a08');
+            waxG.addColorStop(.7, isSSR ? '#6a1a10' : isSR ? '#0e2440' : '#1a0e04');
+            waxG.addColorStop(1, isSSR ? '#3a0a06' : isSR ? '#060e18' : '#0a0600');
+            ctx.fillStyle = waxG;
+            ctx.beginPath(); ctx.arc(0, 0, 55, 0, Math.PI * 2); ctx.fill();
+            // rim
+            ctx.strokeStyle = isSSR ? 'rgba(200,100,60,.6)' : isSR ? 'rgba(100,160,220,.5)' : 'rgba(120,90,40,.5)';
+            ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, 52, 0, Math.PI * 2); ctx.stroke();
+            // inner ring
+            ctx.strokeStyle = isSSR ? 'rgba(240,160,100,.4)' : isSR ? 'rgba(140,200,255,.4)' : 'rgba(160,130,60,.4)';
+            ctx.lineWidth = .8; ctx.beginPath(); ctx.arc(0, 0, 42, 0, Math.PI * 2); ctx.stroke();
+            // engraved musical motif
+            ctx.strokeStyle = isSSR ? 'rgba(255,200,160,.3)' : isSR ? 'rgba(180,220,255,.3)' : 'rgba(200,170,100,.3)';
+            ctx.lineWidth = 1;
+            // treble clef simple
+            ctx.font = '36px Georgia'; ctx.fillStyle = isSSR ? 'rgba(255,180,120,.25)' : isSR ? 'rgba(160,210,255,.25)' : 'rgba(180,150,80,.25)';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('𝄞', 0, 4);
+            // outer text arc (rarity label)
+            const label = isSSR ? 'SUMMA RARITAS' : isSR ? 'RARUS · RARUS' : 'ORDINARIUS';
+            ctx.font = '5.5px Georgia';
+            ctx.fillStyle = isSSR ? 'rgba(255,200,100,.5)' : isSR ? 'rgba(150,210,255,.5)' : 'rgba(160,130,60,.5)';
+            const r2 = 44;
+            for (let i = 0; i < label.length; i++) {
+              const ang = -Math.PI / 2 + (i / label.length) * Math.PI * 2;
+              ctx.save(); ctx.rotate(ang); ctx.translate(0, -r2); ctx.rotate(Math.PI / 2); ctx.fillText(label[i], 0, 0); ctx.restore();
+            }
+            ctx.restore();
+          }
+
+          // stamp impact — shockwave ring spawned once
+          if (phaseT === 12) {
+            for (let i = 0; i < 60; i++) {
+              const ang = (i / 60) * Math.PI * 2;
+              spawnSpark(cx2 + Math.cos(ang) * 2, cy2 + Math.sin(ang) * 2, Math.cos(ang) * (3 + Math.random() * 5), Math.sin(ang) * (3 + Math.random() * 5), 30 + Math.random() * 20, 2, mainCol);
+            }
+            spawnRing(cx2, cy2, 60, mainCol, 30);
+            spawnRing(cx2, cy2, 80, mainCol + '80', 25);
+          }
+          // screen shake on stamp
+          if (phaseT >= 10 && phaseT <= 16) {
+            const shake = (16 - phaseT) * .8;
+            ctx.save(); ctx.translate((Math.random() - .5) * shake, (Math.random() - .5) * shake);
+          } else { ctx.save(); }
+          ctx.restore();
+
+          if (phaseT > 80) { phase = 3; phaseT = 0; }
+        }
+
+        // ── PHASE 3: Light burst + curtain ────────────────────
+        else if (phase === 3) {
+          ctx.fillStyle = '#050300'; ctx.fillRect(0, 0, W, H);
+
+          // SSR: golden sunburst rays spin out
+          if (isSSR && phaseT < 50) {
+            const cx3 = W / 2, cy3 = H / 2;
+            const rayAlpha = Math.min(1, phaseT / 20) * Math.max(0, 1 - (phaseT - 30) / 20);
+            ctx.save(); ctx.translate(cx3, cy3); ctx.rotate(phaseT * .03);
+            for (let i = 0; i < 24; i++) {
+              const ang = (i / 24) * Math.PI * 2;
+              const rayLen = 200 + Math.sin(phaseT * .15 + i) * .30;
+              ctx.strokeStyle = `rgba(200,168,76,${rayAlpha * (i % 2 === 0 ? .4 : .15)})`;
+              ctx.lineWidth = i % 2 === 0 ? 2 : 1;
+              ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(ang) * rayLen, Math.sin(ang) * rayLen); ctx.stroke();
+            }
+            ctx.restore();
+            // central flash
+            const flashAlpha = Math.max(0, 1 - phaseT / 20);
+            ctx.fillStyle = `rgba(255,240,180,${flashAlpha * .9})`; ctx.fillRect(0, 0, W, H);
+          }
+
+          // curtain split: two halves slide apart
+          curtainSplit = Math.min(1, (phaseT - 10) / 55);
+          const curtainEased = curtainSplit < .5 ? 2 * curtainSplit * curtainSplit : 1 - Math.pow(-2 * curtainSplit + 2, 2) / 2;
+          const openW = curtainEased * (W / 2);
+          // left curtain
+          ctx.fillStyle = '#1a1006';
+          ctx.fillRect(0, 0, W / 2 - openW, H);
+          // right curtain
+          ctx.fillRect(W / 2 + openW, 0, W / 2 - openW + 2, H);
+          // curtain folds
+          for (let fold = 0; fold < 4; fold++) {
+            const foldX1 = W / 2 - openW - fold * 8;
+            const foldX2 = W / 2 + openW + fold * 8;
+            ctx.strokeStyle = `rgba(60,40,10,${.4 - fold * .08})`; ctx.lineWidth = 3 - fold * .5;
+            ctx.beginPath(); ctx.moveTo(foldX1, 0); ctx.lineTo(foldX1 + 4, H / 2); ctx.lineTo(foldX1, H); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(foldX2, 0); ctx.lineTo(foldX2 - 4, H / 2); ctx.lineTo(foldX2, H); ctx.stroke();
+          }
+          // curtain gold fringe top
+          ctx.fillStyle = 'rgba(154,124,58,.5)';
+          ctx.fillRect(0, 0, W / 2 - openW, 4); ctx.fillRect(W / 2 + openW, 0, W / 2 - openW + 2, 4);
+
+          // portrait fades in behind curtains
+          if (phaseT > 20) {
+            portAlpha = Math.min(1, (phaseT - 20) / 40);
+            const portW = 220, portH = 280;
+            const portX = (W - portW) / 2, portY = (H - portH) / 2 - 20;
+            ctx.globalAlpha = portAlpha;
+            ctx.drawImage(portOff, portX, portY, portW, portH);
+            ctx.globalAlpha = 1;
+            // name text emerges
+            if (portAlpha > .3) {
+              const textAlpha = Math.min(1, (portAlpha - .3) / .7);
+              ctx.fillStyle = `rgba(232,212,154,${textAlpha})`;
+              ctx.font = `italic ${Math.round(22)}px 'IM Fell English',Georgia`;
+              ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+              ctx.fillText(composer.name, W / 2, H / 2 + portH / 2 - 10 + 20);
+              ctx.font = `italic 11px 'Cormorant Garamond',Georgia`;
+              ctx.fillStyle = `rgba(154,124,58,${textAlpha})`;
+              ctx.fillText(composer.years + ' · ' + composer.nation, W / 2, H / 2 + portH / 2 + 15 + 20);
+              // stars
+              ctx.font = '14px Georgia';
+              ctx.fillStyle = `rgba(201,168,76,${textAlpha})`;
+              ctx.fillText(composer.stars, W / 2, H / 2 + portH / 2 + 34 + 20);
+            }
+          }
+
+          // spawn note particles continuously
+          if (phaseT % 5 === 0 && phaseT < 90) {
+            spawnNote(Math.random() * W, H + 10, (Math.random() - .5) * .8, -1.5 - Math.random() * 2, 100, 10 + Math.random() * 8, mainCol + '80');
+          }
+
+          if (phaseT > 90) { phase = 4; phaseT = 0; }
+        }
+
+        // ── PHASE 4: Hold & fade out ──────────────────────────
+        else if (phase === 4) {
+          // hold portrait
+          ctx.fillStyle = '#050300'; ctx.fillRect(0, 0, W, H);
+          ctx.globalAlpha = 1;
+          const portW = 220, portH = 280;
+          const portX = (W - portW) / 2, portY = (H - portH) / 2 - 20;
+          ctx.drawImage(portOff, portX, portY, portW, portH);
+          // vignette
+          const v = ctx.createRadialGradient(W / 2, H / 2, 60, W / 2, H / 2, W * .7);
+          v.addColorStop(0, 'transparent'); v.addColorStop(1, 'rgba(0,0,0,.7)');
+          ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+          // text
+          ctx.font = `italic 22px 'IM Fell English',Georgia`; ctx.fillStyle = 'rgba(232,212,154,.95)';
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(composer.name, W / 2, H / 2 + portH / 2 - 10 + 20);
+          ctx.font = `italic 11px Georgia`; ctx.fillStyle = 'rgba(154,124,58,.9)';
+          ctx.fillText(composer.years + ' · ' + composer.nation, W / 2, H / 2 + portH / 2 + 15 + 20);
+          ctx.font = '14px Georgia'; ctx.fillStyle = 'rgba(201,168,76,.95)';
+          ctx.fillText(composer.stars, W / 2, H / 2 + portH / 2 + 34 + 20);
+          ctx.globalAlpha = 1;
+          // staff ornament lines
+          ctx.strokeStyle = 'rgba(154,124,58,.25)'; ctx.lineWidth = .5;
+          [H * .2, H * .8].forEach(ry => { ctx.beginPath(); ctx.moveTo(30, ry); ctx.lineTo(W - 30, ry); ctx.stroke(); });
+
+          if (phaseT % 5 === 0) spawnNote(20 + Math.random() * 340, H + 10, (Math.random() - .5) * .5, -1.2 - Math.random() * 1.5, 90, 9 + Math.random() * 7, mainCol + '60');
+
+          // fade to result
+          if (phaseT > 50) {
+            const fadeA = Math.min(1, (phaseT - 50) / 25);
+            ctx.fillStyle = `rgba(5,3,0,${fadeA})`; ctx.fillRect(0, 0, W, H);
+            if (fadeA >= 1 && !animDone) { animDone = true; }
+          }
+        }
+
+        // draw particles
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.life--;
+          const a = p.life / p.maxLife;
+          if (p.type === 'note') {
+            p.x += p.vx; p.y += p.vy;
+            ctx.globalAlpha = a * .7;
+            ctx.font = `${p.size}px Georgia`; ctx.fillStyle = p.col;
+            ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+            ctx.fillText(p.char, p.x, p.y);
+            ctx.globalAlpha = 1;
+          } else if (p.type === 'spark') {
+            p.x += p.vx; p.y += p.vy; p.vy += .15; p.vx *= .95; p.vy *= .97;
+            ctx.globalAlpha = a * .8;
+            ctx.fillStyle = p.col;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.size * a, 0, Math.PI * 2); ctx.fill();
+            ctx.globalAlpha = 1;
+          } else if (p.type === 'ring') {
+            const rr = p.maxR * (1 - a) * .6 + p.maxR * a * .0;
+            const ringR2 = p.maxR * (1 + (1 - a) * .8);
+            ctx.globalAlpha = a * .6;
+            ctx.strokeStyle = p.col; ctx.lineWidth = 2 * (1 - a) + .5;
+            ctx.beginPath(); ctx.arc(p.x, p.y, ringR2, 0, Math.PI * 2); ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+          if (p.life <= 0) particles.splice(i, 1);
+        }
+
+        if (!animDone) animId = requestAnimationFrame(tick);
+        else {
+          cv.style.display = 'none';
+          showResult(composer);
+        }
+      }
+
+      let animDone = false;
+      animId = requestAnimationFrame(tick);
+    }
+
+    let resultAnimId = null;
+    function showResult(c) {
+      const sc = document.getElementById('resultScreen');
+      sc.style.display = 'flex';
+      sc.className = 'rarity-' + c.rarity;
+      const pc = document.getElementById('resultPortCanvas');
+      drawPortrait(pc, c, 140, 175);
+      document.getElementById('resultTitle').textContent = c.rarity === 'SSR' ? '— 超稀少の楽聖 —' : '— 召喚成功 —';
+      document.getElementById('resultName').textContent = c.name;
+      document.getElementById('resultYears').textContent = c.years + ' · ' + c.nation;
+      document.getElementById('resultStars').textContent = c.stars;
+      document.getElementById('resultRarity').textContent = c.rarity + (c.rarity === 'SSR' ? ' · 超稀少' : c.rarity === 'SR' ? ' · 稀少' : ' · 一般');
+      document.getElementById('resultWorkTitle').textContent = c.work;
+      setTimeout(() => document.getElementById('resultTitle').classList.add('show'), 100);
+      setTimeout(() => document.getElementById('resultPortrait').classList.add('show'), 300);
+      setTimeout(() => document.getElementById('resultRarity').classList.add('show'), 600);
+      setTimeout(() => document.getElementById('resultStars').classList.add('show'), 650);
+      setTimeout(() => document.getElementById('resultName').classList.add('show'), 700);
+      setTimeout(() => document.getElementById('resultYears').classList.add('show'), 780);
+      setTimeout(() => document.getElementById('resultWork').classList.add('show'), 900);
+      setTimeout(() => document.getElementById('closeBtn').classList.add('show'), 1200);
+      const rc = document.getElementById('resultCanvas'); rc.width = 380; rc.height = 780;
+      const ctx = rc.getContext('2d');
+      const goldC = c.rarity === 'SSR' ? '#c9a84c' : c.rarity === 'SR' ? '#8ab4d4' : '#7a6a5a';
+      const noteChars = ['♩', '♪', '♫', '♬', '𝄞'];
+      const motes = []; let rt = 0;
+      function resLoop() {
+        ctx.clearRect(0, 0, 380, 780); rt++;
+        if (rt % 7 === 0) {
+          motes.push({ x: 40 + Math.random() * 300, y: 780, vx: (Math.random() - .5) * 1.2, vy: -(1 + Math.random() * 2), alpha: .6 + Math.random() * .4, size: 10 + Math.random() * 14, char: Math.random() > .5 ? noteChars[Math.floor(Math.random() * noteChars.length)] : null, life: 80 + Math.random() * 60, maxLife: 140 });
+        }
+        motes.forEach(m => {
+          m.x += m.vx; m.y += m.vy; m.life--;
+          const a = m.life / m.maxLife;
+          if (m.char) { ctx.font = `${m.size}px Georgia`; ctx.fillStyle = goldC + Math.floor(a * .5 * 255).toString(16).padStart(2, '0'); ctx.fillText(m.char, m.x, m.y); }
+          else { ctx.fillStyle = goldC + Math.floor(a * .6 * 255).toString(16).padStart(2, '0'); ctx.beginPath(); ctx.arc(m.x, m.y, m.size * .15, 0, Math.PI * 2); ctx.fill(); }
+        });
+        for (let i = motes.length - 1; i >= 0; i--) { if (motes[i].life <= 0) motes.splice(i, 1); }
+        resultAnimId = requestAnimationFrame(resLoop);
+      }
+      resLoop();
+      const pityLeft = 100 - pity;
+      document.getElementById('pityCount').textContent = pityLeft;
+      document.getElementById('pityFill').style.width = pity + '%';
+    }
+
+    function closeResult() {
+      if (resultAnimId) { cancelAnimationFrame(resultAnimId); resultAnimId = null; }
+      document.getElementById('resultScreen').style.display = 'none';
+      ['resultTitle', 'resultPortrait', 'resultRarity', 'resultStars', 'resultName', 'resultYears', 'resultWork', 'closeBtn']
+        .forEach(id => document.getElementById(id).classList.remove('show'));
+      document.getElementById('btn1').disabled = false;
+      document.getElementById('btn10').disabled = false;
+    }
+  </script>
+
+</body>
+
+</html>

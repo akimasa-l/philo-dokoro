@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webガチャシミュレーター</title>
+    <style>
+        :root {
+            --ssr-color: #ffd700;
+            --sr-color: #c0c0c0;
+            --r-color: #4da6ff;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: white;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* ガチャ容器 */
+        #gacha-container {
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        /* 結果表示エリア */
+        #result-display {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            min-height: 150px;
+            margin-bottom: 30px;
+        }
+
+        /* カードのスタイル */
+        .card {
+            width: 80px;
+            height: 110px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: #000;
+            transform: scale(0);
+            animation: popIn 0.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            to { transform: scale(1); }
+        }
+
+        .ssr { background: linear-gradient(45deg, #fff3b0, var(--ssr-color)); box-shadow: 0 0 15px var(--ssr-color); border: 2px solid #fff; }
+        .sr  { background: linear-gradient(45deg, #e0e0e0, var(--sr-color)); box-shadow: 0 0 10px var(--sr-color); }
+        .r   { background: linear-gradient(45deg, #a1c4fd, var(--r-color)); }
+
+        /* ボタン */
+        .gacha-btn {
+            background: linear-gradient(to bottom, #ff4e50, #f9d423);
+            border: none;
+            padding: 15px 40px;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.1s;
+            box-shadow: 0 4px 15px rgba(255, 78, 80, 0.4);
+        }
+
+        .gacha-btn:active {
+            transform: scale(0.95);
+        }
+
+        .gacha-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="gacha-container">
+        <h1>PREMIUM GACHA</h1>
+        <div id="result-display">
+            </div>
+        <button class="gacha-btn" onclick="playGacha(10)">10回引く！</button>
+        <p id="status-msg">幸運を祈ります</p>
+    </div>
+
+    <script>
+        const MASTER_DATA = [
+            { id: 1, name: 'SSR キャラ', rarity: 'ssr', rate: 3 },
+            { id: 2, name: 'SR キャラ', rarity: 'sr', rate: 17 },
+            { id: 3, name: 'R キャラ', rarity: 'r', rate: 80 }
+        ];
+
+        function playGacha(times) {
+            const display = document.getElementById('result-display');
+            const btn = document.querySelector('.gacha-btn');
+            
+            // 画面をリセット
+            display.innerHTML = '';
+            btn.disabled = true;
+
+            for (let i = 0; i < times; i++) {
+                // 演出のために少しずつ遅らせて表示
+                setTimeout(() => {
+                    const result = draw();
+                    const card = document.createElement('div');
+                    card.className = `card ${result.rarity}`;
+                    card.innerText = result.rarity.toUpperCase();
+                    display.appendChild(card);
+
+                    if (i === times - 1) btn.disabled = false;
+                }, i * 100);
+            }
+        }
+
+        // 重み付け抽選ロジック
+        function draw() {
+            const random = Math.random() * 100;
+            let currentRate = 0;
+
+            for (const item of MASTER_DATA) {
+                currentRate += item.rate;
+                if (random <= currentRate) {
+                    return item;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

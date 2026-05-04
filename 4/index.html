@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Gacha Ultra</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --accent: #ff00de;
+            --bg: #0a0a12;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg) 100%);
+            color: white;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        /* 背景の動く光 */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 45%, rgba(0, 242, 255, 0.05) 50%, transparent 55%);
+            animation: scan 10s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* メインコンテナ */
+        .gacha-stage {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        /* 召喚の円郭 */
+        .portal-core {
+            width: 280px;
+            height: 280px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2), inset 0 0 30px rgba(0, 242, 255, 0.2);
+            transition: all 0.5s ease;
+        }
+
+        .portal-core.active {
+            animation: pulse 0.5s infinite alternate, spin 2s linear infinite;
+            border-color: var(--accent);
+            box-shadow: 0 0 60px var(--accent);
+        }
+
+        /* アイテム表示部 */
+        #display-item {
+            font-size: 80px;
+            filter: drop-shadow(0 0 15px white);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: scale(0);
+        }
+
+        #display-item.show {
+            transform: scale(1.2);
+        }
+
+        /* ネオンボタン */
+        .btn-cyber {
+            margin-top: 60px;
+            padding: 15px 50px;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+        }
+
+        .btn-cyber:hover {
+            background: var(--primary);
+            color: var(--bg);
+            box-shadow: 0 0 30px var(--primary);
+        }
+
+        .btn-cyber:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        /* 結果テキスト */
+        .result-info {
+            margin-top: 30px;
+            height: 50px;
+        }
+
+        .rarity-tag {
+            font-style: italic;
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 5px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: 0.5s;
+        }
+
+        .rarity-tag.reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* アニメーション定義 */
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        @keyframes spin {
+            from { rotate: 0deg; }
+            to { rotate: 360deg; }
+        }
+
+        /* レアリティ別発光 */
+        .ssr { color: var(--accent); text-shadow: 0 0 20px var(--accent); }
+        .sr { color: #e74c3c; text-shadow: 0 0 15px #e74c3c; }
+        .r { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div class="gacha-stage">
+        <div id="portal" class="portal-core">
+            <div id="display-item">❓</div>
+        </div>
+
+        <div class="result-info">
+            <div id="rarity-text" class="rarity-tag"></div>
+            <div id="item-name" style="margin-top: 10px; color: #aaa;"></div>
+        </div>
+
+        <button id="draw-btn" class="btn-cyber">EXECUTE SUMMON</button>
+    </div>
+
+    <script>
+        const items = [
+            { name: 'PLASMA BLADE', emoji: '⚔️', rarity: 'ssr', rate: 5 },
+            { name: 'VOID CANNON', emoji: '🔫', rarity: 'sr', rate: 15 },
+            { name: 'NEON SHIELD', emoji: '🛡️', rarity: 'r', rate: 30 },
+            { name: 'DATA SCRAP', emoji: '⚙️', rarity: 'n', rate: 50 }
+        ];
+
+        const btn = document.getElementById('draw-btn');
+        const portal = document.getElementById('portal');
+        const display = document.getElementById('display-item');
+        const rarityText = document.getElementById('rarity-text');
+        const itemName = document.getElementById('item-name');
+
+        btn.addEventListener('click', () => {
+            // 初期化
+            btn.disabled = true;
+            display.classList.remove('show');
+            rarityText.classList.remove('reveal');
+            display.textContent = '⚡';
+            itemName.textContent = '';
+            
+            // 演出開始
+            portal.classList.add('active');
+
+            // 2秒間の「溜め」演出
+            setTimeout(() => {
+                const res = draw();
+                
+                // 演出終了
+                portal.classList.remove('active');
+                
+                // 結果表示
+                display.textContent = res.emoji;
+                display.classList.add('show');
+                
+                rarityText.textContent = res.rarity.toUpperCase();
+                rarityText.className = `rarity-tag reveal ${res.rarity}`;
+                
+                itemName.textContent = res.name;
+                
+                btn.disabled = false;
+            }, 2000);
+        });
+
+        function draw() {
+            const roll = Math.random() * 100;
+            let current = 0;
+            for (const item of items) {
+                current += item.rate;
+                if (roll <= current) return item;
+            }
+            return items[items.length - 1];
+        }
+    </script>
+</body>
+</html>

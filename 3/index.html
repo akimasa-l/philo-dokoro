@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Gacha Game</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+
+        /* ガチャマシンの外観 */
+        .gacha-container {
+            position: relative;
+            width: 200px;
+            height: 250px;
+            background: #ff4757;
+            border-radius: 50px 50px 20px 20px;
+            box-shadow: 0 10px 0 #cc3945;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 20px;
+        }
+
+        /* 窓の部分 */
+        .gacha-window {
+            width: 140px;
+            height: 120px;
+            background: #ffffffaa;
+            border-radius: 40px 40px 10px 10px;
+            position: absolute;
+            top: 30px;
+            border: 4px solid #fff;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* カプセルの演出 */
+        .capsule {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(to bottom, #3498db 50%, #fff 50%);
+            border-radius: 50%;
+            border: 3px solid #333;
+        }
+
+        /* アニメーション：揺れ */
+        .shake {
+            animation: shake-animation 0.5s ease-in-out infinite;
+        }
+
+        @keyframes shake-animation {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(5px, -5px) rotate(10deg); }
+            50% { transform: translate(-5px, 0) rotate(-10deg); }
+            75% { transform: translate(5px, 5px) rotate(10deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* ボタン */
+        .gacha-btn {
+            margin-top: 40px;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background-color: #2ed573;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #26af5f;
+            transition: 0.1s;
+        }
+
+        .gacha-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #26af5f;
+        }
+
+        .gacha-btn:disabled {
+            background-color: #ccc;
+            box-shadow: 0 5px 0 #999;
+            cursor: not-allowed;
+        }
+
+        /* 結果表示のモーダル風 */
+        #result-display {
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            min-height: 36px;
+            color: #333;
+        }
+
+        .rarity-ssr { color: #f1c40f; text-shadow: 0 0 10px #f39c12; }
+        .rarity-sr { color: #9b59b6; }
+        .rarity-r { color: #3498db; }
+    </style>
+</head>
+<body>
+
+    <div class="gacha-container">
+        <div class="gacha-window">
+            <div id="capsule" class="capsule"></div>
+        </div>
+    </div>
+
+    <button id="draw-btn" class="gacha-btn">ガチャを回す！</button>
+
+    <div id="result-display"></div>
+
+    <script>
+        const drawBtn = document.getElementById('draw-btn');
+        const capsule = document.getElementById('capsule');
+        const resultDisplay = document.getElementById('result-display');
+
+        // ガチャの中身データ
+        const items = [
+            { name: '超激レア！SSR剣', rarity: 'ssr', chance: 5 },
+            { name: '激レア！SR弓', rarity: 'sr', chance: 15 },
+            { name: 'レアな盾', rarity: 'r', chance: 30 },
+            { name: 'ただの石ころ', rarity: 'n', chance: 50 }
+        ];
+
+        drawBtn.addEventListener('click', () => {
+            // 状態のリセット
+            resultDisplay.textContent = '何が出るかな...？';
+            resultDisplay.className = '';
+            drawBtn.disabled = true;
+            
+            // アニメーション開始
+            capsule.classList.add('shake');
+
+            // 1.5秒後に結果を表示
+            setTimeout(() => {
+                capsule.classList.remove('shake');
+                const result = getGachaResult();
+                
+                resultDisplay.textContent = `結果：${result.name}`;
+                resultDisplay.classList.add(`rarity-${result.rarity}`);
+                
+                drawBtn.disabled = false;
+            }, 1500);
+        });
+
+        // 確率計算ロジック
+        function getGachaResult() {
+            const random = Math.floor(Math.random() * 100);
+            let cumulativeChance = 0;
+
+            for (const item of items) {
+                cumulativeChance += item.chance;
+                if (random < cumulativeChance) {
+                    return item;
+                }
+            }
+            return items[items.length - 1];
+        }
+    </script>
+</body>
+</html>

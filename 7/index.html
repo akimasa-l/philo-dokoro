@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0e0b07;font-family:'Cormorant Garamond',Georgia,serif;overflow:hidden}
+#app{width:380px;min-height:780px;background:#0e0b07;position:relative;overflow:hidden}
+
+.parchment-grain{position:absolute;inset:0;pointer-events:none;z-index:1;background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(200,170,100,.015) 2px,rgba(200,170,100,.015) 4px),repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(200,170,100,.01) 3px,rgba(200,170,100,.01) 6px)}
+.vignette{position:absolute;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse at center,transparent 40%,rgba(5,3,0,.7) 100%)}
+
+.top-ornament{position:relative;z-index:5;text-align:center;padding:22px 20px 8px}
+.ornament-line{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:4px}
+.orn-rule{flex:1;height:1px;background:linear-gradient(90deg,transparent,#9a7c3a,transparent)}
+.orn-diamond{width:6px;height:6px;background:#9a7c3a;transform:rotate(45deg);flex-shrink:0}
+.title-main{font-family:'IM Fell English',serif;font-size:11px;letter-spacing:5px;color:#9a7c3a;text-transform:uppercase;font-style:italic}
+.title-sub{font-family:'IM Fell English',serif;font-size:22px;color:#e8d49a;letter-spacing:2px;margin:2px 0}
+.gem-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px}
+.gem-pill{display:flex;align-items:center;gap:5px;border:1px solid rgba(154,124,58,.5);border-radius:20px;padding:4px 12px;background:rgba(154,124,58,.08)}
+.gem-count{font-size:13px;color:#e8d49a;font-weight:300;letter-spacing:1px}
+.gem-dot{width:6px;height:6px;border-radius:50%;background:#9a7c3a}
+
+.portrait-stage{position:relative;z-index:5;margin:12px 20px 0;border:1px solid rgba(154,124,58,.3);background:rgba(8,6,2,.8)}
+.portrait-frame{position:relative;width:100%;height:220px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.portrait-canvas{position:absolute;inset:0;width:100%;height:100%}
+.portrait-info{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(5,3,0,.95) 60%,transparent);padding:16px}
+.composer-name{font-family:'IM Fell English',serif;font-size:20px;color:#e8d49a;letter-spacing:1px}
+.composer-years{font-family:'Cormorant Garamond',serif;font-size:12px;color:#9a7c3a;letter-spacing:2px;font-style:italic;margin-top:2px}
+.rarity-stars{color:#c9a84c;font-size:14px;margin-top:4px;letter-spacing:3px}
+.corner-ornament{position:absolute;width:20px;height:20px;border-color:#9a7c3a;border-style:solid;opacity:.6}
+.co-tl{top:8px;left:8px;border-width:1px 0 0 1px}
+.co-tr{top:8px;right:8px;border-width:1px 1px 0 0}
+.co-bl{bottom:8px;left:8px;border-width:0 0 1px 1px}
+.co-br{bottom:8px;right:8px;border-width:0 1px 1px 0}
+
+.work-panel{position:relative;z-index:5;margin:0 20px;border:1px solid rgba(154,124,58,.25);border-top:none;background:rgba(12,9,4,.9);padding:12px 14px}
+.work-label{font-size:10px;letter-spacing:3px;color:#6b5528;text-transform:uppercase;margin-bottom:5px}
+.work-title{font-family:'IM Fell English',serif;font-size:15px;color:#d4b87a;font-style:italic;line-height:1.4}
+.work-key{font-size:11px;color:#7a6040;letter-spacing:1px;margin-top:3px}
+
+.divider-row{display:flex;align-items:center;gap:8px;margin:14px 20px 0;position:relative;z-index:5}
+.div-rule{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(154,124,58,.3),transparent)}
+.div-text{font-size:10px;color:#6b5528;letter-spacing:3px;text-transform:uppercase;white-space:nowrap}
+
+.btns{display:flex;gap:10px;margin:10px 20px 0;position:relative;z-index:5}
+.gacha-btn{flex:1;cursor:pointer;border:1px solid rgba(154,124,58,.5);background:rgba(154,124,58,.08);padding:14px 8px;position:relative;overflow:hidden;transition:background .2s}
+.gacha-btn:hover{background:rgba(154,124,58,.14)}
+.gacha-btn:active{transform:scale(.98)}
+.btn-inner{text-align:center}
+.btn-type{font-size:9px;letter-spacing:3px;color:#6b5528;text-transform:uppercase;display:block}
+.btn-cta{font-family:'IM Fell English',serif;font-size:16px;color:#e8d49a;display:block;margin:2px 0}
+.btn-cost{font-size:11px;color:#9a7c3a;letter-spacing:1px}
+.btn-shimmer{position:absolute;top:0;left:-60%;width:40px;height:100%;background:linear-gradient(90deg,transparent,rgba(232,212,154,.12),transparent);transform:skewX(-15deg);animation:shm 3s infinite}
+@keyframes shm{0%{left:-60%}100%{left:160%}}
+.btn-highlight{border-color:rgba(200,168,76,.7);background:rgba(154,124,58,.15)}
+
+.pity-row{display:flex;align-items:center;justify-content:space-between;margin:10px 20px 0;position:relative;z-index:5}
+.pity-text{font-size:10px;color:#6b5528;letter-spacing:1px;font-style:italic}
+.pity-bar{flex:1;height:2px;background:rgba(154,124,58,.15);margin:0 10px}
+.pity-fill{height:100%;background:linear-gradient(90deg,#6b5528,#c9a84c);transition:width .6s}
+.pity-num{font-family:'IM Fell English',serif;font-size:13px;color:#9a7c3a}
+
+.bottom-ornament{display:flex;align-items:center;gap:10px;margin:10px 20px 4px;position:relative;z-index:5}
+.bot-rule{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(154,124,58,.2),transparent)}
+.bot-dot{width:4px;height:4px;background:rgba(154,124,58,.4);transform:rotate(45deg);flex-shrink:0}
+
+/* TRANSITION */
+#transOverlay{position:absolute;inset:0;z-index:50;pointer-events:none;display:none}
+#transCanvas{position:absolute;inset:0;width:100%;height:100%}
+
+/* RESULT */
+#resultScreen{position:absolute;inset:0;z-index:80;background:#0a0700;display:none;flex-direction:column;align-items:center;padding:0}
+#resultCanvas{position:absolute;inset:0;width:100%;height:100%}
+.result-inner{position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center}
+.result-ornament{text-align:center;padding:28px 20px 12px}
+.result-orn-line{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:6px}
+.result-title{font-family:'IM Fell English',serif;font-size:18px;color:#e8d49a;letter-spacing:3px;font-style:italic;opacity:0;transform:translateY(-10px);transition:opacity .6s,transform .6s}
+.result-title.show{opacity:1;transform:none}
+
+.result-portrait{width:140px;height:175px;border:1px solid rgba(154,124,58,.5);position:relative;overflow:hidden;opacity:0;transform:scale(.9);transition:opacity .7s .2s,transform .7s .2s}
+.result-portrait.show{opacity:1;transform:none}
+.result-portrait canvas{width:100%;height:100%}
+.res-co{position:absolute;width:14px;height:14px;border-color:#9a7c3a;border-style:solid;opacity:.7}
+.res-co-tl{top:5px;left:5px;border-width:1px 0 0 1px}
+.res-co-tr{top:5px;right:5px;border-width:1px 1px 0 0}
+.res-co-bl{bottom:5px;left:5px;border-width:0 0 1px 1px}
+.res-co-br{bottom:5px;right:5px;border-width:0 1px 1px 0}
+
+.result-name{font-family:'IM Fell English',serif;font-size:22px;color:#e8d49a;text-align:center;margin-top:14px;opacity:0;transition:opacity .5s .5s}
+.result-name.show{opacity:1}
+.result-years{font-size:12px;color:#9a7c3a;letter-spacing:2px;font-style:italic;text-align:center;margin-top:2px;opacity:0;transition:opacity .5s .6s}
+.result-years.show{opacity:1}
+.result-stars{color:#c9a84c;font-size:16px;letter-spacing:4px;text-align:center;margin-top:6px;opacity:0;transition:opacity .5s .7s}
+.result-stars.show{opacity:1}
+.result-work{margin:12px 30px 0;border:1px solid rgba(154,124,58,.3);padding:10px 14px;text-align:center;opacity:0;transition:opacity .5s .85s}
+.result-work.show{opacity:1}
+.result-work-label{font-size:9px;letter-spacing:3px;color:#6b5528;text-transform:uppercase;margin-bottom:4px}
+.result-work-title{font-family:'IM Fell English',serif;font-size:14px;color:#d4b87a;font-style:italic}
+.result-close{margin-top:18px;padding:10px 40px;border:1px solid rgba(154,124,58,.4);background:transparent;color:#9a7c3a;font-family:'IM Fell English',serif;font-size:14px;letter-spacing:2px;cursor:pointer;opacity:0;transition:opacity .5s 1.2s;font-style:italic}
+.result-close.show{opacity:1}
+.result-rarity-badge{font-size:10px;letter-spacing:3px;color:#6b5528;text-transform:uppercase;text-align:center;margin-top:8px;opacity:0;transition:opacity .5s .75s}
+.result-rarity-badge.show{opacity:1}
+.rarity-SSR .result-rarity-badge{color:#c9a84c}
+.rarity-SR .result-rarity-badge{color:#8ab4d4}
+</style>
+
+</head>
+<body>
+  
+<div id="app">
+  <div class="parchment-grain"></div>
+  <div class="vignette"></div>
+
+  <div class="top-ornament">
+    <div class="ornament-line">
+      <div class="orn-rule"></div>
+      <div class="orn-diamond"></div>
+      <div class="orn-rule"></div>
+    </div>
+    <div class="title-main">Musica Aeterna</div>
+    <div class="title-sub">楽聖召喚</div>
+    <div class="ornament-line" style="margin-top:6px">
+      <div class="orn-rule"></div>
+      <div class="orn-diamond"></div>
+      <div class="orn-rule"></div>
+    </div>
+    <div class="gem-row">
+      <div class="gem-pill">
+        <div class="gem-dot"></div>
+        <span class="gem-count" id="gemCount">3,000</span>
+        <span style="font-size:10px;color:#6b5528;letter-spacing:1px"> 金貨</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="portrait-stage">
+    <div class="portrait-frame" id="portraitFrame">
+      <canvas id="portraitCanvas" width="340" height="220"></canvas>
+      <div class="corner-ornament co-tl"></div>
+      <div class="corner-ornament co-tr"></div>
+      <div class="corner-ornament co-bl"></div>
+      <div class="corner-ornament co-br"></div>
+      <div class="portrait-info">
+        <div class="rarity-stars" id="mainStars">★★★★★</div>
+        <div class="composer-name" id="mainName">Ludwig van Beethoven</div>
+        <div class="composer-years" id="mainYears">1770 – 1827 · ドイツ</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="work-panel">
+    <div class="work-label">代表作</div>
+    <div class="work-title" id="mainWork">交響曲 第9番 ニ短調 Op.125 「合唱」</div>
+    <div class="work-key" id="mainKey">Choral · 1824年初演</div>
+  </div>
+
+  <div class="divider-row">
+    <div class="div-rule"></div>
+    <div class="div-text">召喚の儀</div>
+    <div class="div-rule"></div>
+  </div>
+
+  <div class="btns">
+    <button class="gacha-btn" id="btn1" onclick="doGacha(1)">
+      <div class="btn-shimmer"></div>
+      <div class="btn-inner">
+        <span class="btn-type">単独召喚</span>
+        <span class="btn-cta">Summon ×1</span>
+        <span class="btn-cost">金貨 300</span>
+      </div>
+    </button>
+    <button class="gacha-btn btn-highlight" id="btn10" onclick="doGacha(10)">
+      <div class="btn-shimmer" style="animation-delay:-.8s"></div>
+      <div class="btn-inner">
+        <span class="btn-type">十連召喚</span>
+        <span class="btn-cta">Summon ×10</span>
+        <span class="btn-cost">金貨 2,700</span>
+      </div>
+    </button>
+  </div>
+
+  <div class="pity-row">
+    <span class="pity-text">天井まで</span>
+    <div class="pity-bar"><div class="pity-fill" id="pityFill" style="width:38%"></div></div>
+    <span class="pity-num" id="pityCount">62</span>
+  </div>
+
+  <div class="bottom-ornament">
+    <div class="bot-rule"></div>
+    <div class="bot-dot"></div>
+    <div class="bot-rule"></div>
+  </div>
+
+  <div id="transOverlay">
+    <canvas id="transCanvas"></canvas>
+  </div>
+
+  <div id="resultScreen">
+    <canvas id="resultCanvas"></canvas>
+    <div class="result-inner">
+      <div class="result-ornament">
+        <div class="result-orn-line">
+          <div class="orn-rule"></div>
+          <div class="orn-diamond"></div>
+          <div class="orn-rule"></div>
+        </div>
+        <div class="result-title" id="resultTitle">召喚成功</div>
+      </div>
+      <div class="result-portrait" id="resultPortrait">
+        <canvas id="resultPortCanvas" width="140" height="175"></canvas>
+        <div class="res-co res-co-tl"></div>
+        <div class="res-co res-co-tr"></div>
+        <div class="res-co res-co-bl"></div>
+        <div class="res-co res-co-br"></div>
+      </div>
+      <div class="result-rarity-badge" id="resultRarity">SSR · 超稀少</div>
+      <div class="result-stars" id="resultStars">★★★★★</div>
+      <div class="result-name" id="resultName">Beethoven</div>
+      <div class="result-years" id="resultYears">1770 – 1827 · ドイツ</div>
+      <div class="result-work" id="resultWork">
+        <div class="result-work-label">代表作</div>
+        <div class="result-work-title" id="resultWorkTitle">交響曲 第9番</div>
+      </div>
+      <button class="result-close" id="closeBtn" onclick="closeResult()">— 閉じる —</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const composers = [
+  {
+    name:'Ludwig van Beethoven', short:'Beethoven', years:'1770–1827', nation:'ドイツ',
+    rarity:'SSR', stars:'★★★★★',
+    work:'交響曲 第9番 ニ短調 Op.125「合唱」', key:'Choral · 1824年初演',
+    hair:'#3a2a1a', skin:'#c9a07a', coat:'#1a1410', accent:'#6b3a1f',
+    feature:'豪放な眉、強い眼差し', weight:1
+  },
+  {
+    name:'Wolfgang Amadeus Mozart', short:'Mozart', years:'1756–1791', nation:'オーストリア',
+    rarity:'SSR', stars:'★★★★★',
+    work:'レクイエム ニ短調 K.626', key:'Requiem · 未完成',
+    hair:'#d4c8a0', skin:'#e8c9a0', coat:'#2a1a4a', accent:'#8a6a2a',
+    feature:'巻き毛、優雅な表情', weight:1
+  },
+  {
+    name:'Johann Sebastian Bach', short:'Bach', years:'1685–1750', nation:'ドイツ',
+    rarity:'SSR', stars:'★★★★★',
+    work:'マタイ受難曲 BWV 244', key:'St. Matthew Passion · 1727年',
+    hair:'#d8cdb4', skin:'#c8a882', coat:'#1e1814', accent:'#5a4a2a',
+    feature:'白いかつら、厳粛な表情', weight:1
+  },
+  {
+    name:'Frédéric Chopin', short:'Chopin', years:'1810–1849', nation:'ポーランド',
+    rarity:'SR', stars:'★★★★',
+    work:'夜想曲 第20番 嬰ハ短調 「遺作」', key:'Nocturne · 1830年頃',
+    hair:'#8a7040', skin:'#d4a878', coat:'#0e1a24', accent:'#4a6a8a',
+    feature:'繊細な顔立ち、詩的な眼', weight:3
+  },
+  {
+    name:'Franz Schubert', short:'Schubert', years:'1797–1828', nation:'オーストリア',
+    rarity:'SR', stars:'★★★★',
+    work:'弦楽四重奏曲「死と乙女」D.810', key:'String Quartet · 1824年',
+    hair:'#2a1a0a', skin:'#c0906a', coat:'#1a1a2a', accent:'#4a3a6a',
+    feature:'丸眼鏡、温かな表情', weight:3
+  },
+  {
+    name:'Claude Debussy', short:'Debussy', years:'1862–1918', nation:'フランス',
+    rarity:'SR', stars:'★★★★',
+    work:'月の光（ベルガマスク組曲）', key:'Clair de lune · 1905年',
+    hair:'#3a2a1a', skin:'#c8a082', coat:'#1a2a1a', accent:'#2a4a3a',
+    feature:'豊かな顎髭、印象派的な瞳', weight:3
+  },
+  {
+    name:'Johannes Brahms', short:'Brahms', years:'1833–1897', nation:'ドイツ',
+    rarity:'R', stars:'★★★',
+    work:'交響曲 第1番 ハ短調 Op.68', key:'Symphony No.1 · 1876年',
+    hair:'#7a6a5a', skin:'#b89070', coat:'#1a1a1a', accent:'#4a4a4a',
+    feature:'白い長い顎髭、沈着な表情', weight:8
+  },
+  {
+    name:'Pyotr Tchaikovsky', short:'Tchaikovsky', years:'1840–1893', nation:'ロシア',
+    rarity:'R', stars:'★★★',
+    work:'白鳥の湖 Op.20', key:'Swan Lake · 1877年初演',
+    hair:'#9a8a7a', skin:'#c0906a', coat:'#1a0a1a', accent:'#4a2a4a',
+    feature:'口髭、哀愁ある眼差し', weight:8
+  },
+  {
+    name:'Antonio Vivaldi', short:'Vivaldi', years:'1678–1741', nation:'イタリア',
+    rarity:'R', stars:'★★★',
+    work:'四季 Op.8 より「春」', key:'The Four Seasons · 1725年',
+    hair:'#c8a060', skin:'#d4a07a', coat:'#6a1a0a', accent:'#c8602a',
+    feature:'赤毛のかつら、司祭の装束', weight:8
+  },
+];
+
+function drawPortrait(canvas, c, w, h) {
+  const ctx = canvas.getContext('2d');
+  canvas.width = w; canvas.height = h;
+  const cx = w/2, cy = h/2;
+
+  // Dark parchment bg
+  ctx.fillStyle = '#0a0800';
+  ctx.fillRect(0,0,w,h);
+
+  // Vignette-like bg circle glow
+  const bg = ctx.createRadialGradient(cx, cy*.8, 0, cx, cy*.8, w*.7);
+  bg.addColorStop(0, '#1a1408');
+  bg.addColorStop(1, '#050400');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,0,w,h);
+
+  // Subtle crosshatch lines (parchment feel)
+  ctx.strokeStyle = 'rgba(160,130,60,.04)';
+  ctx.lineWidth = .5;
+  for(let i=0;i<h;i+=6){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(w,i);ctx.stroke();}
+
+  // Body / coat silhouette
+  ctx.fillStyle = c.coat;
+  ctx.beginPath();
+  ctx.ellipse(cx, h*.95, w*.38, h*.38, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Neck
+  ctx.fillStyle = c.skin;
+  ctx.beginPath();
+  ctx.ellipse(cx, h*.56, w*.08, h*.1, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Head
+  ctx.fillStyle = c.skin;
+  ctx.beginPath();
+  ctx.ellipse(cx, h*.38, w*.19, h*.22, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Hair
+  ctx.fillStyle = c.hair;
+  ctx.beginPath();
+  ctx.ellipse(cx, h*.28, w*.2, h*.14, 0, Math.PI, Math.PI*2);
+  ctx.fill();
+  // Side hair
+  ctx.beginPath();ctx.ellipse(cx-w*.17, h*.36, w*.05, h*.1, -.3, 0, Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(cx+w*.17, h*.36, w*.05, h*.1, .3, 0, Math.PI*2);ctx.fill();
+
+  // Eyes
+  ctx.fillStyle = '#1a0e06';
+  ctx.beginPath();ctx.ellipse(cx-w*.07, h*.37, w*.03, h*.018, 0, 0, Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(cx+w*.07, h*.37, w*.03, h*.018, 0, 0, Math.PI*2);ctx.fill();
+  // Eye shine
+  ctx.fillStyle = 'rgba(255,240,200,.4)';
+  ctx.beginPath();ctx.arc(cx-w*.06, h*.365, w*.008, 0, Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(cx+w*.08, h*.365, w*.008, 0, Math.PI*2);ctx.fill();
+
+  // Nose
+  ctx.strokeStyle = c.skin==='#c9a07a'? '#a07848':'#9a7848';
+  ctx.lineWidth = 1;
+  ctx.beginPath();ctx.moveTo(cx, h*.39);ctx.quadraticCurveTo(cx+w*.04, h*.43, cx, h*.44);ctx.stroke();
+
+  // Mouth
+  ctx.strokeStyle = '#7a5030';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();ctx.moveTo(cx-w*.05, h*.47);ctx.quadraticCurveTo(cx, h*.485, cx+w*.05, h*.47);ctx.stroke();
+
+  // Cravat / collar (period-appropriate)
+  ctx.fillStyle = '#e8dfc0';
+  ctx.beginPath();ctx.moveTo(cx-w*.08,h*.52);ctx.lineTo(cx,h*.58);ctx.lineTo(cx+w*.08,h*.52);ctx.lineTo(cx+w*.12,h*.55);ctx.lineTo(cx,h*.64);ctx.lineTo(cx-w*.12,h*.55);ctx.closePath();ctx.fill();
+
+  // Accent ornament on coat
+  ctx.strokeStyle = c.accent;
+  ctx.lineWidth = 1;
+  ctx.beginPath();ctx.moveTo(cx+w*.05,h*.6);ctx.lineTo(cx+w*.05,h*.75);ctx.stroke();
+
+  // Gold sepia overlay
+  const overlay = ctx.createRadialGradient(cx,cy*.6,0,cx,cy*.6,w*.9);
+  overlay.addColorStop(0,'rgba(180,140,60,.06)');
+  overlay.addColorStop(1,'rgba(80,50,10,.25)');
+  ctx.fillStyle=overlay;
+  ctx.fillRect(0,0,w,h);
+
+  // Vignette edges
+  const vig=ctx.createRadialGradient(cx,cy,w*.2,cx,cy,w*.8);
+  vig.addColorStop(0,'transparent');
+  vig.addColorStop(1,'rgba(0,0,0,.65)');
+  ctx.fillStyle=vig;
+  ctx.fillRect(0,0,w,h);
+}
+
+// Draw main portrait on load
+const featured = composers[0];
+drawPortrait(document.getElementById('portraitCanvas'), featured, 340, 220);
+
+let gems = 3000;
+let pity = 38;
+
+function pick() {
+  const total = composers.reduce((s,c)=>s+c.weight,0);
+  let r = Math.random()*total;
+  for(const c of composers){r-=c.weight;if(r<=0)return c;}
+  return composers[0];
+}
+
+function doGacha(n) {
+  const cost = n===1?300:2700;
+  if(gems<cost) return;
+  gems -= cost;
+  document.getElementById('gemCount').textContent = gems.toLocaleString();
+  document.getElementById('btn1').disabled = true;
+  document.getElementById('btn10').disabled = true;
+
+  pity += n;
+  let result;
+  if(pity >= 100){ result = composers.find(c=>c.rarity==='SSR'); pity=0; }
+  else result = pick();
+
+  runTransition(result.rarity==='SSR', ()=>showResult(result));
+}
+
+// ==== TRANSITION: ink bleed / curtain ====
+function runTransition(isSSR, cb) {
+  const ov = document.getElementById('transOverlay');
+  const cv = document.getElementById('transCanvas');
+  ov.style.display='block'; ov.style.pointerEvents='all';
+  cv.width=380; cv.height=780;
+  const ctx = cv.getContext('2d');
+  const goldC = isSSR ? '#c9a84c' : '#7a6a5a';
+
+  let t=0, done=false;
+  const drops = [];
+
+  // Ink drops falling from top
+  for(let i=0;i<18;i++){
+    drops.push({
+      x: Math.random()*380,
+      y: -Math.random()*200,
+      r: 8+Math.random()*24,
+      spd: 4+Math.random()*8,
+      alpha: .7+Math.random()*.3,
+      color: i%3===0 ? goldC : '#0a0800'
+    });
+  }
+
+  function loop() {
+    ctx.clearRect(0,0,380,780);
+
+    // Black fill growing
+    const fillH = Math.min(780, t*12);
+    ctx.fillStyle = '#080600';
+    ctx.fillRect(0,0,380,fillH);
+
+    // Ink drops
+    drops.forEach(d=>{
+      d.y += d.spd;
+      ctx.fillStyle = d.color + Math.floor(d.alpha*255).toString(16).padStart(2,'0');
+      ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fill();
+      // Drip tail
+      ctx.fillStyle = d.color+'40';
+      ctx.beginPath();ctx.ellipse(d.x,d.y+d.r*1.5,d.r*.3,d.r*.8,0,0,Math.PI*2);ctx.fill();
+    });
+
+    // Gold pen strokes (horizontal rules appearing)
+    if(t>20 && t<50){
+      const alpha = Math.min(1,(t-20)/15);
+      ctx.strokeStyle = goldC + Math.floor(alpha*.6*255).toString(16).padStart(2,'0');
+      ctx.lineWidth=.5;
+      [180,200,580,600].forEach(y=>{
+        ctx.beginPath();ctx.moveTo(20,y);ctx.lineTo(360,y);ctx.stroke();
+      });
+    }
+
+    // Fade to solid
+    if(t>40){
+      const a = Math.min(1,(t-40)/20);
+      ctx.fillStyle = `rgba(8,6,0,${a})`;
+      ctx.fillRect(0,0,380,780);
+    }
+
+    t++;
+    if(t<65) requestAnimationFrame(loop);
+    else {
+      ov.style.display='none'; ov.style.pointerEvents='none';
+      cb();
+    }
+  }
+  requestAnimationFrame(loop);
+}
+
+let resultAnimId = null;
+
+function showResult(c) {
+  const sc = document.getElementById('resultScreen');
+  sc.style.display='flex';
+  sc.className = 'rarity-'+c.rarity;
+
+  // Draw portrait
+  const pc = document.getElementById('resultPortCanvas');
+  drawPortrait(pc, c, 140, 175);
+
+  // Fill info
+  document.getElementById('resultTitle').textContent = c.rarity==='SSR'?'— 超稀少の楽聖 —':'— 召喚成功 —';
+  document.getElementById('resultName').textContent = c.name;
+  document.getElementById('resultYears').textContent = c.years + ' · ' + c.nation;
+  document.getElementById('resultStars').textContent = c.stars;
+  document.getElementById('resultRarity').textContent = c.rarity + (c.rarity==='SSR'?' · 超稀少':c.rarity==='SR'?' · 稀少':' · 一般');
+  document.getElementById('resultWorkTitle').textContent = c.work;
+
+  // Animate in
+  setTimeout(()=>document.getElementById('resultTitle').classList.add('show'),100);
+  setTimeout(()=>document.getElementById('resultPortrait').classList.add('show'),300);
+  setTimeout(()=>document.getElementById('resultRarity').classList.add('show'),600);
+  setTimeout(()=>document.getElementById('resultStars').classList.add('show'),650);
+  setTimeout(()=>document.getElementById('resultName').classList.add('show'),700);
+  setTimeout(()=>document.getElementById('resultYears').classList.add('show'),780);
+  setTimeout(()=>document.getElementById('resultWork').classList.add('show'),900);
+  setTimeout(()=>document.getElementById('closeBtn').classList.add('show'),1200);
+
+  // Canvas: floating musical notes & gold dust
+  const rc = document.getElementById('resultCanvas');
+  rc.width=380; rc.height=780;
+  const ctx = rc.getContext('2d');
+  const goldC = c.rarity==='SSR'?'#c9a84c':c.rarity==='SR'?'#8ab4d4':'#7a6a5a';
+
+  const motes = [];
+  let rt=0;
+  const noteChars=['♩','♪','♫','♬','𝄞','𝄢'];
+
+  function resLoop(){
+    ctx.clearRect(0,0,380,780);
+    rt++;
+
+    if(rt%8===0){
+      motes.push({
+        x:40+Math.random()*300,
+        y:780,
+        vx:(Math.random()-.5)*1.2,
+        vy:-(1+Math.random()*2),
+        alpha:.6+Math.random()*.4,
+        size:10+Math.random()*14,
+        char:Math.random()>.6?noteChars[Math.floor(Math.random()*noteChars.length)]:null,
+        life:80+Math.random()*60,
+        maxLife:140
+      });
+    }
+
+    motes.forEach(m=>{
+      m.x+=m.vx; m.y+=m.vy; m.vy*=.99;
+      m.life--;
+      const a=m.life/m.maxLife;
+      if(m.char){
+        ctx.font=`${m.size}px Georgia`;
+        ctx.fillStyle=goldC+Math.floor(a*.5*255).toString(16).padStart(2,'0');
+        ctx.fillText(m.char,m.x,m.y);
+      } else {
+        ctx.fillStyle=goldC+Math.floor(a*.6*255).toString(16).padStart(2,'0');
+        ctx.beginPath();ctx.arc(m.x,m.y,m.size*.15,0,Math.PI*2);ctx.fill();
+      }
+    });
+    for(let i=motes.length-1;i>=0;i--){if(motes[i].life<=0)motes.splice(i,1);}
+    resultAnimId=requestAnimationFrame(resLoop);
+  }
+  resLoop();
+
+  // Update pity bar
+  const pityLeft = 100-pity;
+  document.getElementById('pityCount').textContent = pityLeft;
+  document.getElementById('pityFill').style.width = pity+'%';
+}
+
+function closeResult(){
+  if(resultAnimId){cancelAnimationFrame(resultAnimId);resultAnimId=null;}
+  const sc = document.getElementById('resultScreen');
+  sc.style.display='none';
+  ['resultTitle','resultPortrait','resultRarity','resultStars','resultName','resultYears','resultWork','closeBtn']
+    .forEach(id=>document.getElementById(id).classList.remove('show'));
+  document.getElementById('btn1').disabled=false;
+  document.getElementById('btn10').disabled=false;
+}
+</script>
+
+</body>
+</html>
