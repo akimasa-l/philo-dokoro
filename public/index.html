@@ -715,7 +715,7 @@
         }
 
         .cmt {
-            font-size: clamp(.10rem, .71rem, 1.5rem);
+            /* font-size: .71rem; */
             line-height: 1.88;
             color: rgba(240, 228, 196, .78);
             overflow-y: auto;
@@ -887,7 +887,6 @@
             <button class="rbtn" id="rbtn">◈ もう一度引く ◈</button>
         </div>
     </div>
-
     <script>
         /* =============================================
            MUSIC DATA
@@ -1267,7 +1266,7 @@
     </div>
     <div class="cbdy">
       <div class="lbl">Comment</div>
-      <div class="cmt">${m.comment.replace(/\n/g, '<br>')}</div>
+      <div class="cmt" id="cmt">${m.comment.replace(/\n/g, '<br>')}</div>
       <div class="lbl">Recommended by</div>
       <div class="rec">— ${m.penName}</div>
     </div>
@@ -1289,6 +1288,12 @@
 
             rs.classList.add('on');
             cs.classList.add('entering');
+            const cmt = document.getElementById("cmt");
+            let fontsize=3;
+            while(cmt.scrollHeight > cmt.clientHeight){
+                fontsize*=0.98;
+                cmt.style.fontSize = fontsize + "rem";
+            }
 
             setTimeout(() => {
                 c3.classList.add('flp');
