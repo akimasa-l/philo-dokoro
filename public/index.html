@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta name="viewport"
+        content="width=device-width,viewport-fit=cover,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
     <title>Classic Gacha — 音楽ガチャ</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@300;400;700&family=Cinzel+Decorative:wght@400;700&display=swap"
@@ -30,7 +31,8 @@
             color: #F0E4C4;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
-            user-select: none
+            user-select: none;
+
         }
 
         :root {
@@ -47,10 +49,12 @@
 
         #app {
             width: 100vw;
-            height: 100vh;
+            min-height: 100dvh;
             position: relative;
             overflow: hidden
         }
+
+
 
         /* ── BACKGROUND CANVAS ─────────────────── */
         #bgc {
@@ -931,8 +935,8 @@
             }
         ];
         fetch("https://script.google.com/macros/s/AKfycbzFzwfMOoSZsKV82hiqcld_usOaRTzJxCCLPFY6EM5zBa1W9AY56KABMB3QEpgW-j8q/exec")
-        .then(r=>r.json())
-        .then(r=>{MUSIC=r})
+            .then(r => r.json())
+            .then(r => { MUSIC = r })
 
         const NOTES = ['♩', '♪', '♫', '♬'];
 
@@ -1029,7 +1033,7 @@
         const lr = document.getElementById('lr');
         const sk = document.getElementById('sk');
 
-        let gParts = [], gRaf, gPhase = 'idle', gT = 0, gSkip = false, chosen = null;
+        let gParts = [], gRaf, gPhase = 'idle', gT = 0, gSkip = false, chosen = null, already_chosen = [];
 
         const CHARGE_F = 105;
         const EXPLODE_F = 55;
@@ -1294,7 +1298,13 @@
            START GACHA
            ============================================= */
         function startGacha() {
-            chosen = MUSIC[Math.floor(Math.random() * MUSIC.length)];
+            for (let i = 0; i < 100; i++) {
+                chosen = MUSIC[Math.floor(Math.random() * MUSIC.length)];
+                if(!already_chosen.includes(chosen)){
+                    already_chosen.push(chosen);
+                    break;
+                }
+            }
             resAc(); gParts = []; gPhase = 'charge'; gT = 0; gSkip = false;
 
             go.classList.add('active');
