@@ -322,19 +322,22 @@
             content: '';
             position: absolute;
             inset: 0;
-            height: 100vh;
-
+            width: 224px;
+            height: 224px;
+            top:-79px;
+            transform-origin: 50% 50%;
             background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(212, 168, 67, .22) 28deg, transparent 56deg);
             animation: bsh 2.6s linear infinite
         }
 
         @keyframes bsh {
             from {
-                transform: rotate(0)
+                transform: rotate(0);
+
             }
 
             to {
-                transform: rotate(360deg)
+                transform: rotate(360deg);
             }
         }
 
@@ -1290,9 +1293,9 @@
             rs.classList.add('on');
             cs.classList.add('entering');
             const cmt = document.getElementById("cmt");
-            let fontsize=3;
-            while(cmt.scrollHeight > cmt.clientHeight){
-                fontsize*=0.98;
+            let fontsize = 3;
+            while (cmt.scrollHeight > cmt.clientHeight) {
+                fontsize *= 0.98;
                 cmt.style.fontSize = fontsize + "rem";
             }
 
