@@ -321,7 +321,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            height: 50vh;
+            height: 70vh;
 
             background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(212, 168, 67, .22) 28deg, transparent 56deg);
             animation: bsh 2.6s linear infinite
@@ -715,7 +715,7 @@
         }
 
         .cmt {
-            font-size:  clamp(.10rem, .71rem, 1.5rem);
+            font-size: clamp(.10rem, .71rem, 1.5rem);
             line-height: 1.88;
             color: rgba(240, 228, 196, .78);
             overflow-y: auto;
@@ -938,7 +938,10 @@
         ];
         fetch("https://script.google.com/macros/s/AKfycbzFzwfMOoSZsKV82hiqcld_usOaRTzJxCCLPFY6EM5zBa1W9AY56KABMB3QEpgW-j8q/exec")
             .then(r => r.json())
-            .then(r => { MUSIC = r })
+            .then(r => {
+                MUSIC = r;
+                console.log("music updated");
+            })
 
         const NOTES = ['♩', '♪', '♫', '♬'];
 
@@ -1302,7 +1305,7 @@
         function startGacha() {
             for (let i = 0; i < 100; i++) {
                 chosen = MUSIC[Math.floor(Math.random() * MUSIC.length)];
-                if(!already_chosen.includes(chosen)){
+                if (!already_chosen.includes(chosen)) {
                     already_chosen.push(chosen);
                     break;
                 }
