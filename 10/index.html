@@ -883,6 +883,8 @@
       // curtain split
       let curtainSplit = 0; // 0=closed, 1=fully open
 
+      let animDone = false;
+
       function tick() {
         ctx.clearRect(0, 0, W, H);
         phaseT++;
@@ -997,7 +999,7 @@
           }
 
           // seal grows in with stamp thud effect
-          sealProgress = Math.min(1, phaseT / 25);
+          sealProgress = Math.min(1, phaseT / 50);
           const sealEased = sealProgress < .5 ? 4 * sealProgress * sealProgress * sealProgress : 1 - Math.pow(-2 * sealProgress + 2, 3) / 2;
           const scale = sealEased * (1 + (1 - sealEased) * .3); // overshoot
           const cx2 = W / 2, cy2 = H / 2;
@@ -1037,22 +1039,22 @@
           }
 
           // stamp impact — shockwave ring spawned once
-          if (phaseT === 12) {
+          if (phaseT === 20) {
             for (let i = 0; i < 60; i++) {
               const ang = (i / 60) * Math.PI * 2;
-              spawnSpark(cx2 + Math.cos(ang) * 2, cy2 + Math.sin(ang) * 2, Math.cos(ang) * (3 + Math.random() * 5), Math.sin(ang) * (3 + Math.random() * 5), 30 + Math.random() * 20, 2, mainCol);
+              spawnSpark(cx2 + Math.cos(ang) * 2, cy2 + Math.sin(ang) * 2, Math.cos(ang) * (1 + Math.random() * 1), Math.sin(ang) * (1 + Math.random() * 1), 30 + Math.random() * 20, 2, mainCol);
             }
             spawnRing(cx2, cy2, 60, mainCol, 30);
             spawnRing(cx2, cy2, 80, mainCol + '80', 25);
           }
           // screen shake on stamp
-          if (phaseT >= 10 && phaseT <= 16) {
+          if (phaseT >= 30 && phaseT <= 50) {
             const shake = (16 - phaseT) * .8;
             ctx.save(); ctx.translate((Math.random() - .5) * shake, (Math.random() - .5) * shake);
           } else { ctx.save(); }
           ctx.restore();
 
-          if (phaseT > 80) { phase = 3; phaseT = 0; }
+          if (phaseT > 150) { phase = 3; phaseT = 0; }
         }
 
         // ── PHASE 3: Light burst + curtain ────────────────────
@@ -1159,11 +1161,16 @@
 
           // fade to result
           if (phaseT > 50) {
-            const fadeA = Math.min(1, (phaseT - 50) / 25);
+            const fadeA = Math.min(1, (phaseT - 50) / 10);
             ctx.fillStyle = `rgba(5,3,0,${fadeA})`; ctx.fillRect(0, 0, W, H);
-            if (fadeA >= 1 && !animDone) { animDone = true; }
+            if (!animDone) {
+              animDone = true;
+              phase = 5;
+              phaseT = 0;
+            }
           }
         }
+        // console.log({ phase, phaseT })
 
         // draw particles
         for (let i = particles.length - 1; i >= 0; i--) {
@@ -1181,7 +1188,7 @@
             p.x += p.vx; p.y += p.vy; p.vy += .15; p.vx *= .95; p.vy *= .97;
             ctx.globalAlpha = a * .8;
             ctx.fillStyle = p.col;
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.size * a, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(p.size * a, 0), 0, Math.PI * 2); ctx.fill();
             ctx.globalAlpha = 1;
           } else if (p.type === 'ring') {
             const rr = p.maxR * (1 - a) * .6 + p.maxR * a * .0;
@@ -1201,7 +1208,6 @@
         }
       }
 
-      let animDone = false;
       animId = requestAnimationFrame(tick);
     }
 

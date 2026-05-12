@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "introducer": "山田 太郎",
+    "title": "交響曲第5番 ハ短調 Op.67「運命」第1楽章",
+    "composer": "ルートヴィヒ・ヴァン・ベートーヴェン",
+    "youtube": "https://www.youtube.com/watch?v=_4IRMYuE1hI",
+    "highlight": "あの有名な「ダダダダーン」の動機が全曲を貫く圧倒的な構成力。運命と対峙する人間の意志を感じてほしい。"
+  },
+  {
+    "id": 2,
+    "introducer": "佐藤 花子",
+    "title": "ピアノ協奏曲第2番 ハ短調 Op.18",
+    "composer": "セルゲイ・ラフマニノフ",
+    "youtube": "https://www.youtube.com/watch?v=rEGOihjqO9w",
+    "highlight": "冒頭のピアノ独奏から鳥肌が立つ。ロシアの広大な大地と憂愁が混然一体となった、至高のロマン派音楽。"
+  },
+  {
+    "id": 3,
+    "introducer": "鈴木 一郎",
+    "title": "弦楽四重奏曲第14番 ニ短調 K.421",
+    "composer": "ヴォルフガング・アマデウス・モーツァルト",
+    "youtube": "https://www.youtube.com/watch?v=m4hVVMEbRNs",
+    "highlight": "モーツァルトが数少ない短調で書いた傑作。表面の美しさの裏に滲む深い哀愁と葛藤が癖になる。"
+  },
+  {
+    "id": 4,
+    "introducer": "田中 美咲",
+    "title": "ゴルトベルク変奏曲 BWV 988",
+    "composer": "ヨハン・ゼバスティアン・バッハ",
+    "youtube": "https://www.youtube.com/watch?v=Ah392lnFHxM",
+    "highlight": "グールドの演奏で聴いてほしい。アリアから始まり30の変奏を経て再びアリアへ。宇宙が閉じるような感動。"
+  },
+  {
+    "id": 5,
+    "introducer": "中村 勇気",
+    "title": "交響曲第9番 ニ短調 Op.125「合唱」第4楽章",
+    "composer": "ルートヴィヒ・ヴァン・ベートーヴェン",
+    "youtube": "https://www.youtube.com/watch?v=t3217H8JppI",
+    "highlight": "耳が聞こえない状態で書かれた人類の宝。歓喜の歌が始まる瞬間、毎回涙が出る。"
+  },
+  {
+    "id": 6,
+    "introducer": "小林 奈々",
+    "title": "夜想曲（ノクターン）第20番 嬰ハ短調「遺作」",
+    "composer": "フレデリック・ショパン",
+    "youtube": "https://www.youtube.com/watch?v=YGRO05WcNDk",
+    "highlight": "映画『戦場のピアニスト』で使われた曲。儚くも美しいメロディが心に染みる。深夜に一人で聴いてほしい。"
+  },
+  {
+    "id": 7,
+    "introducer": "伊藤 健太",
+    "title": "四季 ヴァイオリン協奏曲「春」Op.8 第1番",
+    "composer": "アントニオ・ヴィヴァルディ",
+    "youtube": "https://www.youtube.com/watch?v=6LAPWVS_OVM",
+    "highlight": "春の陽光と小鳥のさえずりが目に浮かぶ。バロック音楽の中でも特に絵画的で、聴き始めの入門にも最適。"
+  },
+  {
+    "id": 8,
+    "introducer": "渡辺 さくら",
+    "title": "交響曲第6番 ロ短調 Op.74「悲愴」第4楽章",
+    "composer": "ピョートル・チャイコフスキー",
+    "youtube": "https://www.youtube.com/watch?v=7BNFKmCSqbQ",
+    "highlight": "チャイコフスキーが初演の9日後に謎の死を遂げた、まるで遺書のような作品。絶望と諦観の美しさ。"
+  },
+  {
+    "id": 9,
+    "introducer": "松本 隆",
+    "title": "亡き王女のためのパヴァーヌ",
+    "composer": "モーリス・ラヴェル",
+    "youtube": "https://www.youtube.com/watch?v=0fxLEVHdAXs",
+    "highlight": "タイトルは「スペインの古い絵画に描かれた幼い王女が踊るパヴァーヌ」のイメージ。夢と現実の境を漂うような音楽。"
+  },
+  {
+    "id": 10,
+    "introducer": "加藤 里奈",
+    "title": "ピアノソナタ第14番 嬰ハ短調 Op.27-2「月光」第1楽章",
+    "composer": "ルートヴィヒ・ヴァン・ベートーヴェン",
+    "youtube": "https://www.youtube.com/watch?v=4Tr0otuiQuU",
+    "highlight": "月夜の湖面に波紋が広がるような三連符の連続。暗闇の中に差し込む静謐な光を感じる永遠の名曲。"
+  }
+]

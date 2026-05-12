@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>古典楽曲ガチャ</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8cf88;
+    --gold-dark: #8a6a1f;
+    --cream: #f5efe0;
+    --ink: #1a1209;
+    --deep: #0d0a05;
+    --slate: #2a2015;
+    --muted: #7a6840;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--deep);
+    min-height: 100vh;
+    font-family: 'Noto Serif JP', serif;
+    color: var(--cream);
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* 星空背景 */
+  .starfield {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(100,70,20,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(80,50,10,0.12) 0%, transparent 50%),
+      #0d0a05;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: #e8cf88;
+    border-radius: 50%;
+    animation: twinkle var(--dur) ease-in-out infinite;
+    opacity: 0;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; }
+    50% { opacity: var(--op); }
+  }
+
+  /* メインコンテナ */
+  .container {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 40px 20px 60px;
+  }
+
+  /* タイトル */
+  .title-block {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .title-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .title-main {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--cream);
+    line-height: 1.3;
+  }
+
+  .title-deco {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin-top: 14px;
+  }
+
+  .title-deco-line {
+    height: 1px; width: 60px;
+    background: linear-gradient(to right, transparent, var(--gold));
+  }
+  .title-deco-line:last-child {
+    background: linear-gradient(to left, transparent, var(--gold));
+  }
+
+  .title-deco-gem {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+  }
+
+  /* カウンター */
+  .counter {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 36px;
+  }
+
+  .counter span {
+    color: var(--gold-light);
+    font-size: 16px;
+  }
+
+  /* ガチャ球体エリア */
+  .orb-area {
+    position: relative;
+    width: 220px; height: 220px;
+    margin-bottom: 44px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .orb {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background:
+      radial-gradient(ellipse at 35% 30%, rgba(232,207,136,0.35) 0%, transparent 50%),
+      radial-gradient(ellipse at 65% 70%, rgba(138,106,31,0.2) 0%, transparent 40%),
+      radial-gradient(circle, #3a2c10 0%, #1a1209 60%, #0d0a05 100%);
+    border: 1.5px solid rgba(201,168,76,0.4);
+    box-shadow:
+      0 0 40px rgba(201,168,76,0.08),
+      inset 0 0 60px rgba(0,0,0,0.8),
+      inset 0 2px 8px rgba(232,207,136,0.15);
+    transition: transform 0.15s ease;
+  }
+
+  /* 球体内のマーク */
+  .orb-inner {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px;
+  }
+
+  .orb-symbol {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    color: rgba(201,168,76,0.6);
+    line-height: 1;
+    user-select: none;
+  }
+
+  .orb-label {
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    color: rgba(201,168,76,0.5);
+    text-transform: uppercase;
+  }
+
+  /* 輝きエフェクト */
+  .orb-glow {
+    position: absolute; inset: -20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.0) 40%, transparent 70%);
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+
+  .orb-ring {
+    position: absolute; inset: -4px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.2);
+    pointer-events: none;
+  }
+  .orb-ring-2 {
+    position: absolute; inset: -12px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.1);
+    pointer-events: none;
+  }
+
+  /* ガチャボタン */
+  .gacha-btn {
+    position: relative;
+    width: 200px;
+    padding: 16px 0;
+    border: 1px solid rgba(201,168,76,0.6);
+    background: transparent;
+    color: var(--gold-light);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    letter-spacing: 0.3em;
+    cursor: pointer;
+    outline: none;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    margin-bottom: 16px;
+  }
+
+  .gacha-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(201,168,76,0.08) 100%);
+  }
+
+  .gacha-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: -100%;
+    width: 100%; height: 1px;
+    background: var(--gold);
+    transform: translateY(-50%);
+    transition: left 0.3s ease;
+  }
+
+  .gacha-btn:not(:disabled):hover::after { left: 100%; }
+
+  .gacha-btn:not(:disabled):active { transform: scale(0.97); }
+  .gacha-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-corners::before, .btn-corners::after {
+    content: '';
+    position: absolute;
+    width: 8px; height: 8px;
+    border-color: var(--gold);
+    border-style: solid;
+    opacity: 0.7;
+  }
+  .btn-corners::before { top: 4px; left: 4px; border-width: 1px 0 0 1px; }
+  .btn-corners::after { bottom: 4px; right: 4px; border-width: 0 1px 1px 0; }
+
+  .btn-text { position: relative; z-index: 1; }
+
+  /* ===== 演出：光りエフェクト overlay ===== */
+  .flash-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255,235,150,0.95) 0%, rgba(201,168,76,0.7) 30%, rgba(100,70,10,0.4) 60%, transparent 80%);
+  }
+
+  /* 光の粒子 */
+  .particles-canvas {
+    position: fixed; inset: 0; z-index: 101;
+    pointer-events: none;
+  }
+
+  /* ===== スワイプ誘導画面 ===== */
+  .reveal-screen {
+    position: fixed; inset: 0; z-index: 200;
+    display: none;
+    align-items: center; justify-content: center;
+    flex-direction: column;
+    background: #0d0a05;
+    overflow: hidden;
+  }
+
+  .reveal-screen.active { display: flex; }
+
+  .reveal-card {
+    position: absolute;
+    width: 100%; height: 100%;
+    top: 0; left: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px 28px;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.12) 0%, transparent 60%),
+      #0d0a05;
+  }
+
+  .reveal-card-front, .reveal-card-back {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px 28px;
+    backface-visibility: hidden;
+    transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .reveal-card-back {
+    transform: translateX(100%);
+    background:
+      radial-gradient(ellipse at 50% 20%, rgba(201,168,76,0.1) 0%, transparent 70%),
+      #0d0a05;
+  }
+
+  /* タップヒント */
+  .tap-hint {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    animation: float 2s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-8px); }
+  }
+
+  .tap-hint-icon {
+    font-size: 32px;
+    opacity: 0.6;
+  }
+
+  .tap-hint-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    color: rgba(201,168,76,0.6);
+  }
+
+  /* シールデザイン */
+  .seal {
+    width: 120px; height: 120px;
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    margin-bottom: 32px;
+  }
+
+  .seal::before {
+    content: '';
+    position: absolute; inset: 6px;
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 50%;
+  }
+
+  .seal-symbol {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    color: rgba(201,168,76,0.5);
+  }
+
+  .reveal-mystery {
+    text-align: center;
+  }
+
+  .mystery-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-style: italic;
+    color: rgba(201,168,76,0.7);
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+  }
+
+  .mystery-sub {
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    color: rgba(201,168,76,0.35);
+  }
+
+  /* 結果カード */
+  .result-container {
+    width: 100%;
+    max-width: 340px;
+    animation: revealIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  @keyframes revealIn {
+    from { opacity: 0; transform: scale(0.92) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .result-header {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .result-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(201,168,76,0.5));
+  }
+  .result-line:last-child {
+    background: linear-gradient(to left, transparent, rgba(201,168,76,0.5));
+  }
+
+  .result-gem {
+    width: 8px; height: 8px;
+    background: var(--gold);
+    transform: rotate(45deg);
+  }
+
+  .result-card {
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 28px 24px;
+    position: relative;
+    background: rgba(26,18,9,0.8);
+  }
+
+  .result-card::before, .result-card::after {
+    content: '';
+    position: absolute;
+    width: 12px; height: 12px;
+    border-color: var(--gold);
+    border-style: solid;
+    opacity: 0.5;
+  }
+  .result-card::before { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+  .result-card::after { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+
+  .result-introducer {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .result-title {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--cream);
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  .result-composer {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 20px;
+  }
+
+  .result-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(201,168,76,0.3), transparent);
+    margin: 16px 0;
+  }
+
+  .result-highlight-label {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .result-highlight {
+    font-size: 14px;
+    line-height: 1.85;
+    color: rgba(245,239,224,0.8);
+  }
+
+  .result-youtube {
+    display: block;
+    margin-top: 24px;
+    padding: 13px;
+    border: 1px solid rgba(201,168,76,0.4);
+    text-align: center;
+    text-decoration: none;
+    color: var(--gold-light);
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-youtube::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(201,168,76,0.05);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .result-youtube:hover::before { opacity: 1; }
+
+  .result-back-btn {
+    margin-top: 28px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0.25em;
+    cursor: pointer;
+    padding: 8px 24px;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* ===== アニメーション：揺れ・点滅 ===== */
+  @keyframes orbPulse {
+    0%, 100% { box-shadow: 0 0 40px rgba(201,168,76,0.08), inset 0 0 60px rgba(0,0,0,0.8), inset 0 2px 8px rgba(232,207,136,0.15); }
+    50% { box-shadow: 0 0 80px rgba(201,168,76,0.25), inset 0 0 60px rgba(0,0,0,0.8), inset 0 2px 8px rgba(232,207,136,0.15); }
+  }
+
+  @keyframes flashIn {
+    0% { opacity: 0; }
+    30% { opacity: 1; }
+    60% { opacity: 0.6; }
+    80% { opacity: 0.9; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes spinOrb {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .orb-spinning .orb {
+    animation: orbPulse 0.4s ease-in-out infinite;
+  }
+
+  /* スワイプアローアニメーション */
+  @keyframes swipeArrow {
+    0% { transform: translateX(0); opacity: 0.5; }
+    50% { transform: translateX(20px); opacity: 1; }
+    100% { transform: translateX(0); opacity: 0.5; }
+  }
+
+  .swipe-arrows span {
+    display: inline-block;
+    animation: swipeArrow 1.5s ease-in-out infinite;
+  }
+  .swipe-arrows span:nth-child(2) { animation-delay: 0.2s; }
+  .swipe-arrows span:nth-child(3) { animation-delay: 0.4s; }
+
+  /* スライドアウト */
+  @keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(-110%); opacity: 0; }
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(110%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  .slide-out { animation: slideOut 0.55s cubic-bezier(0.55, 0, 0.1, 1) both; }
+  .slide-in { animation: slideIn 0.55s cubic-bezier(0.55, 0, 0.1, 1) both; }
+
+  /* スワイプ中の指示 */
+  .swipe-progress {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    color: rgba(201,168,76,0.4);
+  }
+
+  /* 履歴ボタン */
+  .history-btn {
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.2);
+    color: var(--muted);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .history-btn:hover { border-color: rgba(201,168,76,0.4); color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="starfield" id="starfield"></div>
+<canvas class="particles-canvas" id="particles"></canvas>
+<div class="flash-overlay" id="flashOverlay"></div>
+
+<!-- メイン画面 -->
+<div class="container" id="mainScreen">
+  <div class="title-block">
+    <div class="title-sub">Classical Music</div>
+    <div class="title-main">古典楽曲<br>ガチャ</div>
+    <div class="title-deco">
+      <div class="title-deco-line"></div>
+      <div class="title-deco-gem"></div>
+      <div class="title-deco-line"></div>
+    </div>
+  </div>
+
+  <div class="counter">これまでの抽選数：<span id="pullCount">0</span>回</div>
+
+  <div class="orb-area" id="orbArea">
+    <div class="orb-glow" id="orbGlow"></div>
+    <div class="orb-ring-2"></div>
+    <div class="orb-ring"></div>
+    <div class="orb" id="orb">
+      <div class="orb-inner">
+        <div class="orb-symbol">♩</div>
+        <div class="orb-label">Musica</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="gacha-btn" id="gachaBtn" onclick="startGacha()">
+    <div class="btn-corners"></div>
+    <span class="btn-text">抽　　選</span>
+  </button>
+
+  <button class="history-btn" onclick="showHistory()">過去の抽選を見る</button>
+</div>
+
+<!-- スワイプ誘導画面 -->
+<div class="reveal-screen" id="revealScreen">
+  <div class="reveal-card" id="revealFront">
+    <div class="seal">
+      <div class="seal-symbol">𝄞</div>
+    </div>
+    <div class="reveal-mystery">
+      <div class="mystery-text">一曲が選ばれました</div>
+      <div class="mystery-sub">A piece has been chosen</div>
+    </div>
+    <div class="tap-hint">
+      <div class="swipe-arrows">
+        <span>▶</span><span>▶</span><span>▶</span>
+      </div>
+      <div class="tap-hint-text">swipe to reveal</div>
+    </div>
+    <div class="swipe-progress" id="swipeProgress"></div>
+  </div>
+
+  <div class="reveal-card" id="revealBack" style="transform: translateX(100%); position: absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 28px;">
+    <div class="result-container" id="resultContainer"></div>
+  </div>
+</div>
+
+<script>
+// ===== 楽曲データ =====
+// 実際の使用時は fetch('classical_music.json') でJSONを読み込んでください
+const musicData = [
+  { id:1, introducer:"山田 太郎", title:"交響曲第5番 ハ短調 Op.67「運命」第1楽章", composer:"ルートヴィヒ・ヴァン・ベートーヴェン", youtube:"https://www.youtube.com/watch?v=_4IRMYuE1hI", highlight:"あの有名な「ダダダダーン」の動機が全曲を貫く圧倒的な構成力。運命と対峙する人間の意志を感じてほしい。" },
+  { id:2, introducer:"佐藤 花子", title:"ピアノ協奏曲第2番 ハ短調 Op.18", composer:"セルゲイ・ラフマニノフ", youtube:"https://www.youtube.com/watch?v=rEGOihjqO9w", highlight:"冒頭のピアノ独奏から鳥肌が立つ。ロシアの広大な大地と憂愁が混然一体となった、至高のロマン派音楽。" },
+  { id:3, introducer:"鈴木 一郎", title:"弦楽四重奏曲第14番 ニ短調 K.421", composer:"ヴォルフガング・アマデウス・モーツァルト", youtube:"https://www.youtube.com/watch?v=m4hVVMEbRNs", highlight:"モーツァルトが数少ない短調で書いた傑作。表面の美しさの裏に滲む深い哀愁と葛藤が癖になる。" },
+  { id:4, introducer:"田中 美咲", title:"ゴルトベルク変奏曲 BWV 988", composer:"ヨハン・ゼバスティアン・バッハ", youtube:"https://www.youtube.com/watch?v=Ah392lnFHxM", highlight:"グールドの演奏で聴いてほしい。アリアから始まり30の変奏を経て再びアリアへ。宇宙が閉じるような感動。" },
+  { id:5, introducer:"中村 勇気", title:"交響曲第9番 ニ短調 Op.125「合唱」第4楽章", composer:"ルートヴィヒ・ヴァン・ベートーヴェン", youtube:"https://www.youtube.com/watch?v=t3217H8JppI", highlight:"耳が聞こえない状態で書かれた人類の宝。歓喜の歌が始まる瞬間、毎回涙が出る。" },
+  { id:6, introducer:"小林 奈々", title:"夜想曲（ノクターン）第20番 嬰ハ短調「遺作」", composer:"フレデリック・ショパン", youtube:"https://www.youtube.com/watch?v=YGRO05WcNDk", highlight:"映画『戦場のピアニスト』で使われた曲。儚くも美しいメロディが心に染みる。深夜に一人で聴いてほしい。" },
+  { id:7, introducer:"伊藤 健太", title:"四季 ヴァイオリン協奏曲「春」Op.8 第1番", composer:"アントニオ・ヴィヴァルディ", youtube:"https://www.youtube.com/watch?v=6LAPWVS_OVM", highlight:"春の陽光と小鳥のさえずりが目に浮かぶ。バロック音楽の中でも特に絵画的で、聴き始めの入門にも最適。" },
+  { id:8, introducer:"渡辺 さくら", title:"交響曲第6番 ロ短調 Op.74「悲愴」第4楽章", composer:"ピョートル・チャイコフスキー", youtube:"https://www.youtube.com/watch?v=7BNFKmCSqbQ", highlight:"チャイコフスキーが初演の9日後に謎の死を遂げた、まるで遺書のような作品。絶望と諦観の美しさ。" },
+  { id:9, introducer:"松本 隆", title:"亡き王女のためのパヴァーヌ", composer:"モーリス・ラヴェル", youtube:"https://www.youtube.com/watch?v=0fxLEVHdAXs", highlight:"タイトルは「スペインの古い絵画に描かれた幼い王女が踊るパヴァーヌ」のイメージ。夢と現実の境を漂うような音楽。" },
+  { id:10, introducer:"加藤 里奈", title:"ピアノソナタ第14番 嬰ハ短調 Op.27-2「月光」第1楽章", composer:"ルートヴィヒ・ヴァン・ベートーヴェン", youtube:"https://www.youtube.com/watch?v=4Tr0otuiQuU", highlight:"月夜の湖面に波紋が広がるような三連符の連続。暗闇の中に差し込む静謐な光を感じる永遠の名曲。" }
+];
+
+// ===== 状態管理 =====
+let pullCount = 0;
+let currentResult = null;
+let isAnimating = false;
+let revealPhase = 'front'; // 'front' | 'revealed'
+
+// スワイプ状態
+let swipeStartX = 0;
+let swipeStartY = 0;
+let isSwiping = false;
+
+// ===== 星を生成 =====
+function createStars() {
+  const sf = document.getElementById('starfield');
+  const count = 80;
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    const dur = 2 + Math.random() * 4;
+    const delay = Math.random() * 5;
+    const op = 0.2 + Math.random() * 0.7;
+    s.style.setProperty('--dur', dur + 's');
+    s.style.setProperty('--op', op);
+    s.style.animationDelay = delay + 's';
+    sf.appendChild(s);
+  }
+}
+
+// ===== パーティクル =====
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function spawnParticles(cx, cy) {
+  for (let i = 0; i < 60; i++) {
+    const angle = (Math.random() * Math.PI * 2);
+    const speed = 2 + Math.random() * 6;
+    const size = 1 + Math.random() * 3;
+    const life = 40 + Math.random() * 40;
+    const gold = Math.random() > 0.5;
+    particles.push({
+      x: cx, y: cy,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 2,
+      size, life, maxLife: life,
+      color: gold ? `rgba(201,168,76,A)` : `rgba(232,207,136,A)`
+    });
+  }
+}
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles = particles.filter(p => p.life > 0);
+  for (const p of particles) {
+    const alpha = p.life / p.maxLife;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * alpha, 0, Math.PI * 2);
+    ctx.fillStyle = p.color.replace('A', alpha.toFixed(2));
+    ctx.fill();
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.15;
+    p.vx *= 0.97;
+    p.life--;
+  }
+  requestAnimationFrame(animateParticles);
+}
+
+// ===== ガチャ開始 =====
+function startGacha() {
+  if (isAnimating) return;
+  isAnimating = true;
+
+  const btn = document.getElementById('gachaBtn');
+  const orb = document.getElementById('orb');
+  const orbArea = document.getElementById('orbArea');
+  const flash = document.getElementById('flashOverlay');
+  const glow = document.getElementById('orbGlow');
+
+  btn.disabled = true;
+
+  // ランダム選択
+  currentResult = musicData[Math.floor(Math.random() * musicData.length)];
+  pullCount++;
+  document.getElementById('pullCount').textContent = pullCount;
+
+  // Orb 振動
+  orbArea.classList.add('orb-spinning');
+
+  // 球体クリック座標
+  const rect = orbArea.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+
+  // パーティクル少量
+  spawnParticles(cx, cy);
+
+  // フラッシュシーケンス
+  let t = 0;
+  const flashSeq = [
+    [200, () => { glow.style.background = 'radial-gradient(circle, rgba(201,168,76,0.3) 40%, transparent 70%)'; }],
+    [400, () => { spawnParticles(cx, cy); }],
+    [600, () => {
+      flash.style.animation = 'none';
+      flash.style.opacity = '0';
+      flash.offsetHeight; // reflow
+      flash.style.animation = 'flashIn 1.0s ease-out both';
+      flash.style.opacity = '';
+    }],
+    [800, () => { spawnParticles(cx, cy); }],
+    [1400, () => {
+      // 演出終了 → スワイプ画面へ
+      glow.style.background = 'radial-gradient(circle, rgba(201,168,76,0.0) 40%, transparent 70%)';
+      orbArea.classList.remove('orb-spinning');
+      flash.style.opacity = '0';
+      flash.style.animation = '';
+      openRevealScreen();
+      isAnimating = false;
+      btn.disabled = false;
+    }]
+  ];
+
+  for (const [delay, fn] of flashSeq) {
+    setTimeout(fn, delay);
+  }
+}
+
+// ===== スワイプ画面を開く =====
+function openRevealScreen() {
+  revealPhase = 'front';
+  const front = document.getElementById('revealFront');
+  const back = document.getElementById('revealBack');
+
+  front.style.transform = 'translateX(0)';
+  back.style.transform = 'translateX(100%)';
+  front.style.transition = '';
+  back.style.transition = '';
+
+  // 結果を事前生成
+  buildResultHTML(currentResult);
+
+  document.getElementById('revealScreen').classList.add('active');
+}
+
+function buildResultHTML(piece) {
+  const container = document.getElementById('resultContainer');
+  container.innerHTML = `
+    <div class="result-header">
+      <div class="result-line"></div>
+      <div class="result-gem"></div>
+      <div class="result-line"></div>
+    </div>
+    <div class="result-card">
+      <div class="result-introducer">紹介者：${piece.introducer}</div>
+      <div class="result-title">${piece.title}</div>
+      <div class="result-composer">${piece.composer}</div>
+      <div class="result-divider"></div>
+      <div class="result-highlight-label">Highlight</div>
+      <div class="result-highlight">${piece.highlight}</div>
+      <a class="result-youtube" href="${piece.youtube}" target="_blank" rel="noopener">
+        ▶ YouTube で試聴する
+      </a>
+    </div>
+    <button class="result-back-btn" onclick="closeRevealScreen()">← 戻る</button>
+  `;
+}
+
+// ===== スワイプ検出 =====
+const revealScreen = document.getElementById('revealScreen');
+
+revealScreen.addEventListener('touchstart', e => {
+  if (revealPhase !== 'front') return;
+  swipeStartX = e.touches[0].clientX;
+  swipeStartY = e.touches[0].clientY;
+  isSwiping = true;
+}, { passive: true });
+
+revealScreen.addEventListener('touchmove', e => {
+  if (!isSwiping || revealPhase !== 'front') return;
+  const dx = e.touches[0].clientX - swipeStartX;
+  const dy = e.touches[0].clientY - swipeStartY;
+  if (Math.abs(dx) < Math.abs(dy) * 0.5) return; // 縦スワイプは無視
+
+  const front = document.getElementById('revealFront');
+  const back = document.getElementById('revealBack');
+  const ratio = Math.max(Math.min(dx / window.innerWidth, 0), -1);
+  const pct = (-ratio * 100).toFixed(1);
+
+  front.style.transition = 'none';
+  back.style.transition = 'none';
+  front.style.transform = `translateX(${ratio * 100}%)`;
+  back.style.transform = `translateX(${100 + ratio * 100}%)`;
+
+  const prog = document.getElementById('swipeProgress');
+  if (pct > 10) prog.textContent = `← ${Math.round(pct)}%`;
+  else prog.textContent = '';
+}, { passive: true });
+
+revealScreen.addEventListener('touchend', e => {
+  if (!isSwiping || revealPhase !== 'front') return;
+  isSwiping = false;
+  const dx = e.changedTouches[0].clientX - swipeStartX;
+
+  if (dx < -60) {
+    doReveal();
+  } else {
+    // 戻す
+    const front = document.getElementById('revealFront');
+    const back = document.getElementById('revealBack');
+    front.style.transition = 'transform 0.4s cubic-bezier(0.23,1,0.32,1)';
+    back.style.transition = 'transform 0.4s cubic-bezier(0.23,1,0.32,1)';
+    front.style.transform = 'translateX(0)';
+    back.style.transform = 'translateX(100%)';
+    document.getElementById('swipeProgress').textContent = '';
+  }
+}, { passive: true });
+
+// タップでも開く
+revealScreen.addEventListener('click', e => {
+  if (revealPhase !== 'front') return;
+  if (e.target.closest('.result-back-btn') || e.target.closest('.result-youtube')) return;
+  doReveal();
+});
+
+function doReveal() {
+  if (revealPhase !== 'front') return;
+  revealPhase = 'revealed';
+  const front = document.getElementById('revealFront');
+  const back = document.getElementById('revealBack');
+  front.style.transition = 'transform 0.55s cubic-bezier(0.55,0,0.1,1)';
+  back.style.transition = 'transform 0.55s cubic-bezier(0.55,0,0.1,1)';
+  front.style.transform = 'translateX(-110%)';
+  back.style.transform = 'translateX(0)';
+  document.getElementById('swipeProgress').textContent = '';
+}
+
+function closeRevealScreen() {
+  document.getElementById('revealScreen').classList.remove('active');
+  revealPhase = 'front';
+}
+
+// ===== 履歴（簡易） =====
+let history = [];
+function showHistory() {
+  if (history.length === 0) {
+    alert('まだ抽選していません');
+    return;
+  }
+  const lines = history.map((h, i) => `${i+1}. ${h.title} ／ ${h.composer}`).join('\n');
+  alert('【過去の抽選結果】\n\n' + lines);
+}
+
+// 結果記録
+const origStartGacha = startGacha;
+// startGacha 後に currentResult を記録
+const _orig = startGacha;
+window.startGacha = function() {
+  _orig();
+  // 少し待ってから記録（currentResult がセットされた後）
+  setTimeout(() => { if (currentResult) history.push(currentResult); }, 50);
+};
+
+// ===== 初期化 =====
+window.addEventListener('resize', resizeCanvas);
+createStars();
+resizeCanvas();
+animateParticles();
+</script>
+</body>
+</html>
