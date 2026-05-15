@@ -43,7 +43,7 @@
         body {
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            /* overflow: hidden; */
             background: #040010
         }
 
@@ -71,7 +71,7 @@
             width: 100vw;
             height: 100vh;
             position: relative;
-            overflow: hidden
+            /* overflow: hidden */
         }
 
         /* ── BACKGROUND CANVAS ─────────────────── */
@@ -866,7 +866,7 @@
         #hs {
             position: fixed;
             inset: 0;
-            z-index: 85;
+            z-index: 850;
             background: radial-gradient(ellipse at 50% 20%, #0F0625 0%, #060118 55%, #000 100%);
             display: none;
             /* flex-direction: column */
@@ -981,7 +981,7 @@
             cursor: pointer;
             transition: border-color .15s, background .15s;
             position: relative;
-            /* overflow: hidden */
+            overflow: hidden;
             margin: 12px 0;
         }
 
@@ -1469,6 +1469,54 @@
 
         let gParts = [], gRaf, gPhase = 'idle', gT = 0, gSkip = false, chosen = null, already_chosen = [];
 
+        function storageAvailable(type) {
+            let storage;
+            try {
+                storage = window[type];
+                const x = "__storage_test__";
+                storage.setItem(x, x);
+                storage.removeItem(x);
+                return true;
+            } catch (e) {
+                return (
+                    e instanceof DOMException &&
+                    // everything except Firefox
+                    (e.code === 22 ||
+                        // Firefox
+                        e.code === 1014 ||
+                        // test name field too, because code might not be present
+                        // everything except Firefox
+                        e.name === "QuotaExceededError" ||
+                        // Firefox
+                        e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+                    // acknowledge QuotaExceededError only if there's something already stored
+                    storage &&
+                    storage.length !== 0
+                );
+            }
+        }
+
+        function checkFormatAlreadyChosen(parsed_already_chosen) {
+            try {
+                for(const i of parsed_already_chosen){
+                    if (typeof (i.penName) === "string" && typeof (i.title) === "string" && typeof (i.composer) === "string" && typeof (i.url) === "string" && typeof (i.comment) === "string") {
+                        continue;
+                    } else {
+                        return already_chosen;
+                    }
+                }
+            } catch {
+                return already_chosen;
+            }
+            return parsed_already_chosen;
+        }
+        if (storageAvailable("localStorage")) {
+            let local_already_chosen = localStorage.getItem("already_chosen");
+            if (local_already_chosen) {
+                already_chosen = checkFormatAlreadyChosen(JSON.parse(local_already_chosen));
+            }
+        }
+
         const CHARGE_F = 105;
         const EXPLODE_F = 55;
 
@@ -1739,13 +1787,25 @@
         /* =============================================
            START GACHA
            ============================================= */
+        let is_all_already_chosen = true;
+        function push_alread_chosen(chosen) {
+            already_chosen.push(chosen);
+            if (storageAvailable("localStorage")) {
+                localStorage.setItem("already_chosen", JSON.stringify(already_chosen));
+            }
+        }
         function startGacha() {
             for (let i = 0; i < 10000; i++) {
                 chosen = MUSIC[Math.floor(Math.random() * MUSIC.length)];
                 if (!already_chosen.includes(chosen)) {
-                    already_chosen.push(chosen);
+                    // already_chosen.push(chosen);
+                    push_alread_chosen(chosen);
+                    is_all_already_chosen = false;
                     break;
                 }
+            }
+            if (is_all_already_chosen) {
+                push_alread_chosen(chosen);
             }
             resAc(); gParts = []; gPhase = 'charge'; gT = 0; gSkip = false;
 
@@ -1792,6 +1852,7 @@
             if (already_chosen.length > 0) cnt.classList.add('vis');
             else cnt.classList.remove('vis');
         }
+        updateHistBtn();
 
         function renderHistList() {
             const list = document.getElementById('hs-list');
