@@ -3,10 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width,viewport-fit=cover,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-    <title>ふぃろ処 Classic Gacha — 音楽ガチャ</title>
-    <link rel="icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>Classic Gacha — 音楽ガチャ</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@300;400;700&family=Cinzel+Decorative:wght@400;700&display=swap"
         rel="stylesheet">
@@ -52,8 +50,7 @@
             color: #F0E4C4;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
-            user-select: none;
-
+            user-select: none
         }
 
         :root {
@@ -70,12 +67,10 @@
 
         #app {
             width: 100vw;
-            min-height: 100dvh;
+            height: 100vh;
             position: relative;
             overflow: hidden
         }
-
-
 
         /* ── BACKGROUND CANVAS ─────────────────── */
         #bgc {
@@ -352,12 +347,11 @@
 
         @keyframes bsh {
             from {
-                transform: rotate(0);
-
+                transform: rotate(0)
             }
 
             to {
-                transform: rotate(360deg);
+                transform: rotate(360deg)
             }
         }
 
@@ -739,7 +733,7 @@
         }
 
         .cmt {
-            /* font-size: .71rem; */
+            font-size: .71rem;
             line-height: 1.88;
             color: rgba(240, 228, 196, .78);
             overflow-y: auto;
@@ -806,6 +800,382 @@
             background: rgba(212, 168, 67, .08);
             border-color: var(--g);
             color: var(--g)
+        }
+
+        /* ── HISTORY BUTTON (main screen) ──────── */
+        .hbtn {
+            background: transparent;
+            border: none;
+            color: var(--gd);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: .68rem;
+            letter-spacing: .48em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 12px;
+            position: relative
+        }
+
+        .hbtn::before,
+        .hbtn::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(122, 88, 16, .45))
+        }
+
+        .hbtn::after {
+            background: linear-gradient(-90deg, transparent, rgba(122, 88, 16, .45))
+        }
+
+        .hbtn-cnt {
+            position: absolute;
+            top: -5px;
+            right: 6px;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            background: var(--g);
+            color: #0C0400;
+            font-family: 'Noto Serif JP', serif;
+            font-size: .52rem;
+            font-weight: 700;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0 0 2px 5px;
+        }
+
+        .hbtn-cnt.vis {
+            display: flex
+        }
+
+        /* ── HISTORY SCREEN ─────────────────────── */
+        #hs {
+            position: fixed;
+            inset: 0;
+            z-index: 85;
+            background: radial-gradient(ellipse at 50% 20%, #0F0625 0%, #060118 55%, #000 100%);
+            display: none;
+            flex-direction: column
+        }
+
+        #hs.on {
+            display: flex
+        }
+
+        .hs-hdr {
+            flex-shrink: 0;
+            padding: clamp(36px, 9vw, 54px) 22px 0;
+            text-align: center;
+            position: relative
+        }
+
+        .hs-close {
+            position: absolute;
+            top: clamp(12px, 4vw, 18px);
+            right: 16px;
+            background: transparent;
+            border: 1px solid rgba(212, 168, 67, .28);
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gd);
+            font-size: 1rem;
+            cursor: pointer;
+            line-height: 1
+        }
+
+        .hs-close:active {
+            background: rgba(212, 168, 67, .1)
+        }
+
+        .hs-eyebrow {
+            font-size: .55rem;
+            letter-spacing: .65em;
+            color: var(--gd);
+            margin-bottom: 6px
+        }
+
+        .hs-title {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: clamp(1rem, 4.5vw, 1.3rem);
+            color: var(--g);
+            letter-spacing: .1em;
+            text-shadow: 0 0 18px rgba(212, 168, 67, .45)
+        }
+
+        .hs-line {
+            width: 55px;
+            height: 1px;
+            margin: 8px auto 0;
+            background: linear-gradient(90deg, transparent, var(--g), transparent)
+        }
+
+        /* List */
+        .hs-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px 16px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            -webkit-overflow-scrolling: touch
+        }
+
+        .hs-list::-webkit-scrollbar {
+            width: 2px
+        }
+
+        .hs-list::-webkit-scrollbar-thumb {
+            background: var(--gd);
+            border-radius: 1px
+        }
+
+        /* Empty state */
+        .hs-empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            opacity: .38;
+            padding-bottom: 40px
+        }
+
+        .hs-empty-ico {
+            font-size: 2.8rem;
+            color: var(--g)
+        }
+
+        .hs-empty-txt {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: .78rem;
+            letter-spacing: .35em;
+            color: var(--gd);
+            font-style: italic
+        }
+
+        /* History item card */
+        .hi {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(100deg, rgba(18, 8, 38, .9), rgba(10, 4, 24, .9));
+            border: 1px solid rgba(212, 168, 67, .18);
+            border-radius: 8px;
+            padding: 12px 13px;
+            cursor: pointer;
+            transition: border-color .15s, background .15s;
+            position: relative;
+            overflow: hidden
+        }
+
+        .hi::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(212, 168, 67, .035), transparent 60%);
+            opacity: 0;
+            transition: opacity .18s
+        }
+
+        .hi:active {
+            border-color: rgba(212, 168, 67, .5)
+        }
+
+        .hi:active::before {
+            opacity: 1
+        }
+
+        .hi-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: .65rem;
+            color: var(--gd);
+            min-width: 24px;
+            text-align: center;
+            line-height: 1;
+            padding-top: 2px;
+            flex-shrink: 0
+        }
+
+        .hi-num span {
+            display: block;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--g);
+            opacity: .6
+        }
+
+        .hi-sep {
+            width: 1px;
+            height: 36px;
+            background: linear-gradient(180deg, transparent, rgba(212, 168, 67, .3), transparent);
+            flex-shrink: 0
+        }
+
+        .hi-body {
+            flex: 1;
+            min-width: 0
+        }
+
+        .hi-title {
+            font-family: 'Noto Serif JP', serif;
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--txt);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 3px
+        }
+
+        .hi-comp {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: .72rem;
+            color: var(--g);
+            opacity: .72;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px
+        }
+
+        .hi-pen {
+            font-size: .6rem;
+            letter-spacing: .2em;
+            color: var(--gd);
+            font-style: italic
+        }
+
+        .hi-yt {
+            flex-shrink: 0;
+            width: 30px;
+            height: 30px;
+            background: rgba(100, 0, 0, .5);
+            border: 1px solid rgba(180, 0, 0, .4);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .hi-yt svg {
+            display: block
+        }
+
+        /* ── HISTORY DETAIL PANEL ────────────────── */
+        #hdet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 90;
+            background: linear-gradient(168deg, #130826 0%, #090418 100%);
+            border-top: 1px solid rgba(212, 168, 67, .35);
+            border-radius: 18px 18px 0 0;
+            padding: 0 20px 36px;
+            transform: translateY(100%);
+            transition: transform .42s cubic-bezier(.32, .72, 0, 1);
+            max-height: 86vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch
+        }
+
+        #hdet.on {
+            transform: translateY(0)
+        }
+
+        #hdet::-webkit-scrollbar {
+            width: 2px
+        }
+
+        .#hdet::-webkit-scrollbar-thumb {
+            background: var(--gd)
+        }
+
+        .hdet-pull {
+            width: 38px;
+            height: 3px;
+            background: rgba(212, 168, 67, .3);
+            border-radius: 2px;
+            margin: 14px auto 18px
+        }
+
+        .hdet-comp {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: .7rem;
+            letter-spacing: .35em;
+            color: var(--g);
+            font-style: italic;
+            margin-bottom: 5px;
+            text-transform: uppercase
+        }
+
+        .hdet-title {
+            font-family: 'Noto Serif JP', serif;
+            font-size: 1.08rem;
+            font-weight: 700;
+            color: var(--txt);
+            line-height: 1.5;
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(212, 168, 67, .18)
+        }
+
+        .hdet-lbl {
+            font-size: .58rem;
+            letter-spacing: .48em;
+            color: var(--gd);
+            margin-bottom: 4px;
+            text-transform: uppercase
+        }
+
+        .hdet-pen {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: .95rem;
+            font-style: italic;
+            color: var(--gl);
+            margin-bottom: 16px
+        }
+
+        .hdet-cmt {
+            font-size: .74rem;
+            line-height: 1.95;
+            color: rgba(240, 228, 196, .8);
+            margin-bottom: 22px
+        }
+
+        .hdet-close {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: transparent;
+            border: none;
+            color: var(--gd);
+            font-size: 1.2rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 4px
+        }
+
+        /* backdrop */
+        #hdet-bd {
+            position: fixed;
+            inset: 0;
+            z-index: 89;
+            background: rgba(0, 0, 0, .55);
+            display: none
+        }
+
+        #hdet-bd.on {
+            display: block
         }
 
         /* Card entry animation */
@@ -877,6 +1247,32 @@
                     <span class="dbtn-sl">ガチャを引く</span>
                 </div>
             </button>
+
+            <button class="hbtn" id="hbtn">
+                ❦ HISTORY ❦
+                <span class="hbtn-cnt" id="hbtn-cnt">0</span>
+            </button>
+        </div>
+
+        <!-- HISTORY SCREEN -->
+        <div id="hs">
+            <div class="hs-hdr">
+                <button class="hs-close" id="hs-close" aria-label="閉じる">✕</button>
+                <div class="hs-eyebrow">✦ YOUR COLLECTION ✦</div>
+                <div class="hs-title">History</div>
+                <div class="hs-line"></div>
+            </div>
+            <div class="hs-list" id="hs-list"></div>
+        </div>
+
+        <!-- HISTORY DETAIL BACKDROP -->
+        <div id="hdet-bd"></div>
+
+        <!-- HISTORY DETAIL PANEL -->
+        <div id="hdet">
+            <div class="hdet-pull"></div>
+            <button class="hdet-close" id="hdet-close" aria-label="閉じる">✕</button>
+            <div id="hdet-body"></div>
         </div>
 
         <!-- GACHA OVERLAY -->
@@ -911,6 +1307,7 @@
             <button class="rbtn" id="rbtn">◈ もう一度引く ◈</button>
         </div>
     </div>
+
     <script>
         /* =============================================
            MUSIC DATA
@@ -1276,6 +1673,8 @@
             sk.style.display = 'none';
 
             const m = chosen;
+            // already_chosen.push(m);
+            updateHistBtn();
             const cfrin = document.getElementById('cfrin');
             cfrin.innerHTML = `
     <div class="ch">
@@ -1373,6 +1772,90 @@
         document.getElementById('dbtn').addEventListener('click', startGacha);
         document.getElementById('sk').addEventListener('click', () => { gSkip = true; });
         document.getElementById('rbtn').addEventListener('click', resetGacha);
+
+        /* =============================================
+           HISTORY
+           ============================================= */
+
+        function updateHistBtn() {
+            const cnt = document.getElementById('hbtn-cnt');
+            cnt.textContent = already_chosen.length;
+            if (already_chosen.length > 0) cnt.classList.add('vis');
+            else cnt.classList.remove('vis');
+        }
+
+        function renderHistList() {
+            const list = document.getElementById('hs-list');
+            list.innerHTML = '';
+            if (already_chosen.length === 0) {
+                list.innerHTML = `<div class="hs-empty">
+      <div class="hs-empty-ico">♬</div>
+      <div class="hs-empty-txt">まだ曲を引いていません</div>
+    </div>`;
+                return;
+            }
+            already_chosen.slice().reverse().forEach((m, ri) => {
+                const idx = already_chosen.length - 1 - ri;
+                const n = String(idx + 1).padStart(2, '0');
+                const el = document.createElement('div');
+                el.className = 'hi';
+                el.innerHTML = `
+      <div class="hi-num"><span>${n}</span>No.</div>
+      <div class="hi-sep"></div>
+      <div class="hi-body">
+        <div class="hi-title">${m.title}</div>
+        <div class="hi-comp">${m.composer}</div>
+        <div class="hi-pen">— ${m.penName}</div>
+      </div>
+      <a href="${m.url}" target="_blank" rel="noopener" class="hi-yt" aria-label="YouTube で聴く" onclick="event.stopPropagation()">
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true">
+          <rect width="14" height="10" rx="2" fill="rgba(180,0,0,.8)"/>
+          <polygon points="5,2 5,8 10,5" fill="white"/>
+        </svg>
+      </a>`;
+                el.addEventListener('click', () => openHistDetail(idx));
+                list.appendChild(el);
+            });
+        }
+
+        function openHistory() {
+            renderHistList();
+            document.getElementById('hs').classList.add('on');
+        }
+
+        function closeHistory() {
+            document.getElementById('hs').classList.remove('on');
+        }
+
+        function openHistDetail(idx) {
+            const m = already_chosen[idx];
+            document.getElementById('hdet-body').innerHTML = `
+    <div class="hdet-comp">${m.composer}</div>
+    <div class="hdet-title">${m.title}</div>
+    <div class="hdet-lbl">Recommended by</div>
+    <div class="hdet-pen">— ${m.penName}</div>
+    <div class="hdet-lbl">Comment</div>
+    <div class="hdet-cmt">${m.comment.replace(/\n/g, '<br>')}</div>
+    <a href="${m.url}" target="_blank" rel="noopener" class="ytbtn">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none" aria-hidden="true">
+        <rect width="17" height="12" rx="2.5" fill="rgba(255,255,255,.18)"/>
+        <polygon points="6.5,2.5 6.5,9.5 12.5,6" fill="white"/>
+      </svg>
+      YouTube で聴く
+    </a>`;
+            document.getElementById('hdet').classList.add('on');
+            document.getElementById('hdet-bd').classList.add('on');
+        }
+
+        function closeHistDetail() {
+            document.getElementById('hdet').classList.remove('on');
+            document.getElementById('hdet-bd').classList.remove('on');
+        }
+
+        document.getElementById('hbtn').addEventListener('click', openHistory);
+        document.getElementById('hs-close').addEventListener('click', closeHistory);
+        document.getElementById('hdet-close').addEventListener('click', closeHistDetail);
+        document.getElementById('hdet-bd').addEventListener('click', closeHistDetail);
     </script>
 </body>
 
