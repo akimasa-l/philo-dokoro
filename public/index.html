@@ -1866,8 +1866,8 @@
     </div>`;
                 return;
             }
-            already_chosen.slice().forEach((m, ri) => {
-                const idx = ri;
+            already_chosen.slice().reverse().forEach((m, ri) => {
+                const idx = already_chosen.length - 1 - ri;
                 const n = String(idx + 1).padStart(2, '0');
                 const el = document.createElement('div');
                 el.className = 'hi';
