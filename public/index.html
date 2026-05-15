@@ -137,6 +137,13 @@
             pointer-events: none
         }
 
+        .buttons {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 30px;
+        }
+
         /* Header */
         .hdr {
             text-align: center
@@ -815,7 +822,6 @@
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 7px;
             padding: 6px 12px;
             position: relative
         }
@@ -924,11 +930,8 @@
         /* List */
         .hs-list {
             /* flex: 1; */
-            overflow-y: scroll;
+            overflow: scroll;
             padding: 18px 16px 32px;
-            /* display: flex; */
-            /* flex-direction: column; */
-            gap: 10px;
             -webkit-overflow-scrolling: touch
         }
 
@@ -979,7 +982,7 @@
             transition: border-color .15s, background .15s;
             position: relative;
             /* overflow: hidden */
-            margin:12px 0;
+            margin: 12px 0;
         }
 
         .hi::before {
@@ -1241,22 +1244,23 @@
                 <div class="ring rng3"></div>
                 <div class="orb" id="orb"></div>
             </div>
+            <div class="buttons">
+                <button class="dbtn" id="dbtn">
+                    <div class="dbtn-bg">
+                        <div class="bc tl"></div>
+                        <div class="bc tr"></div>
+                        <div class="bc bl"></div>
+                        <div class="bc br"></div>
+                        <span class="dbtn-ml">DRAW</span>
+                        <span class="dbtn-sl">ガチャを引く</span>
+                    </div>
+                </button>
 
-            <button class="dbtn" id="dbtn">
-                <div class="dbtn-bg">
-                    <div class="bc tl"></div>
-                    <div class="bc tr"></div>
-                    <div class="bc bl"></div>
-                    <div class="bc br"></div>
-                    <span class="dbtn-ml">DRAW</span>
-                    <span class="dbtn-sl">ガチャを引く</span>
-                </div>
-            </button>
-
-            <button class="hbtn" id="hbtn">
-                ❦ HISTORY ❦
-                <span class="hbtn-cnt" id="hbtn-cnt">0</span>
-            </button>
+                <button class="hbtn" id="hbtn">
+                    ❦ HISTORY ❦
+                    <span class="hbtn-cnt" id="hbtn-cnt">0</span>
+                </button>
+            </div>
         </div>
 
         <!-- HISTORY SCREEN -->
