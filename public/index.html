@@ -847,7 +847,9 @@
             display: none;
             align-items: center;
             justify-content: center;
-            padding: 0 0 2px 5px;
+            padding: 0 0 2px 0px;
+            letter-spacing: -0.2px;
+            font-feature-settings: "palt" 1;
         }
 
         .hbtn-cnt.vis {
@@ -861,11 +863,11 @@
             z-index: 85;
             background: radial-gradient(ellipse at 50% 20%, #0F0625 0%, #060118 55%, #000 100%);
             display: none;
-            flex-direction: column
+            /* flex-direction: column */
         }
 
         #hs.on {
-            display: flex
+            display: block;
         }
 
         .hs-hdr {
@@ -921,11 +923,11 @@
 
         /* List */
         .hs-list {
-            flex: 1;
-            overflow-y: auto;
+            /* flex: 1; */
+            overflow-y: scroll;
             padding: 18px 16px 32px;
-            display: flex;
-            flex-direction: column;
+            /* display: flex; */
+            /* flex-direction: column; */
             gap: 10px;
             -webkit-overflow-scrolling: touch
         }
@@ -976,7 +978,8 @@
             cursor: pointer;
             transition: border-color .15s, background .15s;
             position: relative;
-            overflow: hidden
+            /* overflow: hidden */
+            margin:12px 0;
         }
 
         .hi::before {
